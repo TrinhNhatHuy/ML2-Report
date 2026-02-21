@@ -1,1 +1,38 @@
 \section{Data Analysis}
+
+\subsection{Dataset Overview}
+
+\subsubsection{Exploratory Data Analysis}
+
+Data Description
+
+The Forest CoverType dataset from the UCI Machine learning repository is used in this study to model the forest cover classification as a supervised multiclass problem. The initial exploration reveal that:
+\begin{itemize}
+    \item \textbf{Total samples}: 581,012
+    \item \textbf{Total features}: 54
+    \item \textbf{Missing values}: 0 (no imputation required)
+    \item \textbf{Data types}: 10 float64 (continuous), 44 int64 (binary)
+    \item \textbf{Memory usage}: $\sim$248 MB
+\end{itemize}
+
+\subsubsection{Feature Type Analysis}
+The Feature set is composed into two main groups. The first group includes ten continuous variables describing terrain characteristics and spatial distances, these values meansured on hetorogenous scales, which whill be consider more carefully with scale-sensitive machine learning models. The second groups consists of forty-four binary indicator variables. All of these values are encoded using one-hot represenation with values in {0,1}. As these features are already normalized into binary indicators, therefor no additional scaling is required. These features include:
+
+\begin{enumerate}
+    \item \textbf{Continuous Features (n=10)}: 
+    \begin{itemize}
+        \item Topographic: Elevation, Aspect, Slope
+        \item Distance metrics: to hydrology, roadways, fire points
+        \item Solar radiation: Hillshade at 9am, noon, 3pm
+    \end{itemize}
+    
+    \item \textbf{Binary Features (n=44)}:
+    \begin{itemize}
+        \item Wilderness Areas (n=4): One-hot encoded wilderness designation
+        \item Soil Types (n=40): One-hot encoded soil classification
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Statistics Analysis}
+
+
