@@ -105,43 +105,5 @@
 
 
 \input{sections/Introduction.tex}
-\section{Results}
-This section presents the experimental results obtained from different classification models on the Covertype dataset. We evaluate model performance under two scenarios: training with and without SMOTE to address class imbalance. 
-
-The comparison focuses on both predictive performance and computational efficiency. Performance is assessed using Balanced Accuracy, Macro F1-score, Weighted F1-score, and Cohen's Kappa, while computational cost is measured in terms of training and prediction time. 
-
-The objective is to analyze the trade-offs between accuracy, robustness to class imbalance, and computational complexity across different machine learning models.
-\subsection{Overall Performance Comparison}
-
-This subsection provides a comprehensive comparison of model performance 
-under two experimental settings: training without SMOTE and training with SMOTE. 
-We evaluate classification effectiveness using Balanced Accuracy, Macro F1-score, 
-Weighted F1-score, and Cohen’s Kappa. In addition, computational efficiency 
-is assessed through training time and prediction time. The objective is to 
-identify performance trade-offs across different machine learning models 
-and to analyze the impact of SMOTE on imbalanced data handling.
-
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{llccccccc}
-\toprule
-Scenario & Model & Bal. Acc & Macro F1 & W-F1 & Kappa & Train (s) & Pred (s) & Samples \\
-\midrule
-\multirow{4}{*}{Without SMOTE} 
-& Decision Tree & 0.8931 & 0.8173 & 0.8819 & 0.8096 & 8.84 & 0.22 & 406,708 \\
-& Random Forest & 0.9172 & 0.8565 & 0.8973 & 0.8347 & 92.39 & 3.37 & 406,708 \\
-& KNN (k=5) & 0.8708 & 0.8816 & 0.9307 & 0.8888 & 0.29 & 617.38 & 406,708 \\
-& SVM (RBF) & 0.7646 & 0.6183 & 0.7243 & 0.5683 & 20.38 & 223.82 & 20,000 \\
-\midrule
-\multirow{4}{*}{With SMOTE} 
-& Decision Tree & 0.8980 & 0.8248 & 0.8841 & 0.8137 & 74.91 & 0.08 & 1,388,170 \\
-& Random Forest & 0.9268 & 0.8534 & 0.8968 & 0.8338 & 572.91 & 4.15 & 1,388,170 \\
-& KNN (k=5) & 0.9153 & 0.8672 & 0.9240 & 0.8780 & 0.17 & 2118.72 & 1,388,170 \\
-& SVM (RBF) & 0.7922 & 0.5884 & 0.6898 & 0.5206 & 9.65 & 175.44 & 20,000 \\
-\bottomrule
-\end{tabular}
-\caption{Overall performance comparison across models with and without SMOTE.}
-\label{tab:overall_comparison}
-\end{table}
+\input{sections/Result.tex}
 \end{document}
