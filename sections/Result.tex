@@ -37,3 +37,32 @@ Scenario & Model & Bal. Acc & Macro F1 & W-F1 & Kappa & Train (s) & Pred (s) & S
 \caption{Overall performance comparison across models with and without SMOTE.}
 \label{tab:overall_comparison}
 \end{table}
+\subsection{SMOTE impact analysis}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+Model & $\Delta$ Balance Accuracy & $\Delta$ Macro F1 & $\Delta$ W-F1 & $\Delta$ Kappa \\
+\midrule
+Decision Tree & +0.0049 & +0.0075 & +0.0022 & +0.0041 \\
+Random Forest & +0.0095 & -0.0030 & -0.0005 & -0.0010 \\
+KNN (k=5) & +0.0444 & -0.0144 & -0.0067 & -0.0108 \\
+SVM (RBF) & +0.0276 & -0.0299 & -0.0345 & -0.0477 \\
+\bottomrule
+\end{tabular}
+\caption{Detailed performance change after applying SMOTE.}
+\label{tab:smote_delta_full}
+\end{table}
+Table~\ref{tab:smote_delta_full} shows that SMOTE consistently improves 
+Balanced Accuracy across all models, indicating better recall for minority 
+classes after oversampling. The most significant improvement is observed 
+for KNN, suggesting that distance-based methods benefit substantially from 
+a more balanced class distribution. 
+
+However, the gains in Balanced Accuracy are not always accompanied by 
+improvements in Macro F1, Weighted F1, or Cohen’s Kappa. In particular, 
+Random Forest and SVM exhibit slight to notable declines in these metrics, 
+implying that while minority class detection improves, overall predictive 
+agreement and precision may decrease. This highlights a trade-off between 
+class-balanced performance and global model stability when applying SMOTE.
