@@ -1,8 +1,8 @@
 \section{Data Analysis}
 
-\subsection{Dataset Overview}
+\subsection{Exploratory Data Analysis}
 
-\subsubsection{Exploratory Data Analysis}
+\subsubsection{Dataset Overview}
 
 Data Description
 
@@ -35,4 +35,32 @@ The Feature set is composed into two main groups. The first group includes ten c
 
 \subsection{Statistics Analysis}
 
+\subsubsection{Descriptive Statistics}
+
+Table \ref{tab:descriptive_stats} presents descriptive statistics for the ten continuous variables. The results indicate subtsantial hetorogeneity in scale and dispersion across all features. For instance, \texttt{Elevation} has a mean of 2959.4 and a relatively small conefficient of variation ($9.5\%$). In the opposite, \texttt{Vertical\_Distance\_To\_Hydrology} have a coefficient of variation, reflecting a wide range around the mean of the feature values. Distance-related variabes generally show large standard deviations, showing that geographic features are strongly affect the convertype
+
+Regarding distributional shape,  most features in the dataset show decent skewness (i.e. $|$skewness$|$ < 1), showing a approximate symmetry in the dataset.
+
+Overall, the dataset continuous features have a wide range of scales and variability across features, therefore proff the effectiveness for classification task, prior for machine learing algorithm that sensitive to feature magnitude. 
+
+\begin{table}[h]
+\centering
+\caption{Descriptive Statistics for Continuous Features}
+\label{tab:descriptive_stats}
+\small
+\begin{tabular}{@{}lrrrrrrr@{}}
+\toprule
+\textbf{Feature} & \textbf{Mean} & \textbf{Std} & \textbf{Min} & \textbf{Max} & \textbf{Skew} & \textbf{Kurt} & \textbf{CV\%} \\ \midrule
+Elevation & 2959.4 & 279.8 & 1859 & 3858 & $-0.08$ & $-0.41$ & 9.5 \\
+Aspect & 155.7 & 111.9 & 0 & 360 & 0.32 & $-1.26$ & 71.9 \\
+Slope & 14.1 & 7.5 & 0 & 66 & 0.91 & 1.04 & 53.2 \\
+H\_Dist\_Hydrology & 269.4 & 212.5 & 0 & 1397 & 1.09 & 1.32 & 78.9 \\
+V\_Dist\_Hydrology & 46.4 & 58.3 & $-173$ & 601 & 1.78 & 5.82 & 125.6 \\
+H\_Dist\_Roadways & 2350.1 & 1559.3 & 0 & 7117 & 0.76 & 0.25 & 66.4 \\
+Hillshade\_9am & 212.1 & 26.8 & 0 & 254 & $-1.05$ & 1.81 & 12.6 \\
+Hillshade\_Noon & 223.3 & 19.8 & 0 & 254 & $-1.84$ & 5.95 & 8.9 \\
+Hillshade\_3pm & 142.5 & 38.3 & 0 & 254 & 0.23 & $-0.54$ & 26.9 \\
+H\_Dist\_Fire\_Points & 1511.1 & 1099.9 & 0 & 7173 & 0.96 & 0.87 & 72.8 \\ \bottomrule
+\end{tabular}
+\end{table}
 
