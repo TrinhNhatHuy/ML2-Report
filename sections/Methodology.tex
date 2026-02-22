@@ -1,4 +1,130 @@
 \section{Methodology}
+
+This section describes the systematic definition and approach used to analyze the Covertype dataset, prepare it for machine learning, and evaluate model performance. We organized our methodology into two main phases: data analysis and preprocessing, followed by class imbalance handling and model selection, and ended with model evaluation.
+
+\subsection{Data Analysis and Preprocessing}
+
+\paragraph{Variance Distribution Analysis}
+
+\textbf{Definition} Variance measures how much a feature's values spread out from their mean. For a feature $x$ with $n$ samples, variance is calculated as:
+
+$$\text{Variance} = \sigma^2 = \frac{1}{n} \sum_{i=1}^{n} (x_i - \mu)^2$$
+
+where $\mu$ is the mean of the feature.
+
+We calculated variance for all features and summarized the distribution using:
+\begin{itemize}
+  \item Mean: Average variance across features
+  \item Standard Deviation: Spread of variance values
+  \item Minimum: Lowest variance (identifies near-constant features)
+  \item 25th, 50th, 75th Percentiles: Distribution quartiles
+  \item Maximum: Highest variance (identifies highly variable features)
+\end{itemize}
+
+\textbf{Why:} Variance analysis helps us understand feature informativeness and scale differences. Features with very low variance provide little discriminative information, while features with vastly different variances may require scaling for certain algorithms. This analysis directly informs our decision about whether feature scaling is necessary.
+
+\paragraph{Correlation Analysis}
+
+\textbf{Definition:} Correlation measures the linear relationship between two features. We computed the Pearson correlation coefficient for all pairs of continuous features:
+
+$$r_{xy} = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i - \bar{x})^2}\sqrt{\sum_{i=1}^{n}(y_i - \bar{y})^2}}$$
+
+where $r_{xy} \in [-1, 1]$:
+\begin{itemize}
+  \item $r = 1$: Perfect positive correlation
+  \item $r = 0$: No linear correlation
+  \item $r = -1$: Perfect negative correlation
+\end{itemize}
+
+\textbf{Effectiveness:} Correlation analysis reveals:
+\begin{itemize}
+  \item Feature redundancy (highly correlated features may provide similar information)
+  \item Multicollinearity issues that could affect certain models
+  \item Domain relationships between variables
+  \item Potential feature engineering opportunities
+\end{itemize}
+
+Strong correlations suggest that some features capture related information, which affects model selection and interpretation.
+
+\paragraph{Statistical Distribution Analysis}
+
+\textbf{Definition:} For each continuous feature, we calculated comprehensive descriptive statistics:
+
+\begin{itemize}
+  \item \textbf{Mean ($\mu$)}: $\mu = \frac{1}{n}\sum_{i=1}^{n} x_i$
+  \item \textbf{Standard Deviation ($\sigma$)}: $\sigma = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(x_i - \mu)^2}$
+  \item \textbf{Minimum and Maximum}: Range of values
+  \item \textbf{Skewness}: $\text{Skew} = \frac{1}{n}\sum_{i=1}^{n}\left(\frac{x_i - \mu}{\sigma}\right)^3$
+  \item \textbf{Kurtosis}: $\text{Kurt} = \frac{1}{n}\sum_{i=1}^{n}\left(\frac{x_i - \mu}{\sigma}\right)^4 - 3$
+  \item \textbf{Coefficient of Variation}: $\text{CV\%} = \frac{\sigma}{\mu} \times 100\%$
+\end{itemize}
+
+\textbf{Effectiveness:}
+
+\textbf{Skewness} measures distribution asymmetry. Skewness = 0 indicates symmetry (like a normal distribution). Positive skewness means a long right tail (many small values, few large ones), while negative skewness indicates a long left tail. Highly skewed features might benefit from transformation.
+
+\textbf{Kurtosis} measures tail heaviness. High kurtosis indicates heavy tails with potential outliers, while low kurtosis suggests a flatter distribution. This helps identify data quality issues.
+
+\textbf{Coefficient of Variation (CV\%)} provides relative variability, allowing fair comparison between features with different scales. Features with high CV\% show high relative variability and may be strong predictors.
+
+\subsubsection{Preprocessing Methods}
+
+\paragraph{Stratified Train-Test Split}
+
+\textbf{Defintition} We divided the dataset into training and test sets using stratified sampling, which maintains the same class proportions in both subsets as in the original dataset.
+
+For a dataset with $C$ classes, if class $i$ represents proportion $p_i$ of the total data, stratified splitting ensures:
+$$p_i^{\text{train}} = p_i^{\text{test}} = p_i^{\text{original}}$$
+
+We used a 70/30 split ratio:
+\begin{itemize}
+  \item Training: 70\% of data
+  \item Test: 30\% of data
+  \item Random state: 42 (for reproducibility)
+\end{itemize}
+
+Standard random splitting can be problematic for imbalanced datasets. With rare classes, random splitting might accidentally place most or all instances of a rare class in one set, making training or evaluation unreliable or impossible.
+
+Stratified splitting guarantees proportional representation of all classes in both sets, ensuring:
+\begin{itemize}
+  \item Every class appears in training data for learning
+  \item Every class appears in test data for evaluation
+  \item Training and test distributions match the real-world distribution
+  \item Reliable performance estimates across all classes
+\end{itemize}
+
+\paragraph{Standard Scaling}
+
+\textbf{Definition} Standard scaling (z-score normalization) transforms each feature to have mean 0 and standard deviation 1 using:
+
+$$x_{\text{scaled}} = \frac{x - \mu}{\sigma}$$
+
+where $\mu$ is the feature mean and $\sigma$ is the standard deviation.
+
+\textbf{Critical implementation}: To prevent data leakage, we must:
+\begin{enumerate}
+  \item Fit the scaler on training data only (calculate $\mu$ and $\sigma$ from training)
+  \item Transform training data using these parameters
+  \item Transform test data using the same parameters from step 1
+\end{enumerate}
+
+Features often have vastly different scales (e.g., elevation in thousands of meters vs. binary 0/1 indicators). Without scaling:
+
+\begin{itemize}
+  \item \textbf{Distance-based algorithms} (KNN, SVM) are dominated by high variance features because distance calculations treat all features equally
+  \item \textbf{Gradient-based optimization} (neural networks, logistic regression) may converge slowly or poorly
+  \item \textbf{Feature importance} becomes difficult to interpret when scales differ
+\end{itemize}
+
+We chose StandardScaler over alternatives because:
+\begin{itemize}
+  \item \textbf{vs. Min-Max Scaling}: More robust to outliers; doesn't compress data into fixed [0,1] range
+  \item \textbf{vs. No Scaling}: Essential for KNN and SVM; good practice even for tree based models
+  \item \textbf{vs. Robust Scaler}: Standard scaler is simpler and works well when data is roughly normal
+\end{itemize}
+
+StandardScaler maintains the relative distribution shape while ensuring features contribute equally to distance calculations.
+
 \subsection{Class Imbalance Handling}
 
 One of the most significant challenges in this dataset is the severe imbalance across the seven cover type classes. As shown in the class distribution before any resampling, Type 2 (Lodgepole Pine) dominates the training set with 198,310 samples while Type 4 (Cottonwood/Willow) contains only 1,923 with a ratio of over 100:1. Left unaddressed, this imbalance would cause most models to develop a strong bias toward the majority classes, achieving high overall accuracy while almost entirely failing to recognize the rarer cover types.
@@ -75,4 +201,221 @@ Unlike SMOTE, class weighting does not alter the training data or increase its s
 
 Note that KNN does not support class weighting natively due to its non-parametric, distance-based prediction mechanism, where classification is determined purely by neighbor votes with no loss function to reweight. Accordingly, no class weighting was applied for KNN in any experimental scenario.
 
-\newpage
+
+
+\subsection{Model Selection}
+
+We evaluated four supervised learning algorithms representing distinct machine learning paradigms to ensure a comprehensive comparison across model families.
+
+\paragraph{Decision Tree}
+
+\textbf{Model Description:}
+A tree-structured classifier that recursively partitions the feature space using hierarchical decision rules. Internal nodes represent feature tests, branches correspond to outcomes, and leaf nodes assign class labels.
+
+Configuration:
+\begin{itemize}
+  \item Max depth: 20
+  \item Min samples split: 5
+  \item Class weight: balanced
+  \item Criterion: Gini impurity
+\end{itemize}
+
+\textbf{Rationale for inclusion:}
+Decision Trees provide an interpretable baseline model with minimal preprocessing requirements. They naturally capture non-linear relationships and interactions between features, and they serve as the foundational learner for ensemble methods such as Random Forest.
+
+Limitations: Susceptible to overfitting and high variance when used as a single model.
+
+% ------------------------------------------------------------
+
+\paragraph{Random Forest}
+
+\textbf{Model Description:}
+An ensemble learning method that constructs multiple decision trees using bootstrap sampling and random feature selection, aggregating predictions through majority voting.
+
+Configuration:
+\begin{itemize}
+  \item Number of trees: 100
+  \item Max depth: 20 (per tree)
+  \item Min samples split: 5 (per tree)
+  \item Class weight: balanced
+  \item Bootstrap: True
+\end{itemize}
+
+Each tree is trained on:
+\begin{itemize}
+  \item A bootstrap sample of the training data
+  \item A random subset of features at each split
+\end{itemize}
+
+Final prediction: Majority vote across all trees.
+
+\textbf{Rationale for inclusion:}
+Random Forest reduces variance through ensemble averaging and generally provides strong performance on structured tabular data. It is widely regarded as a robust benchmark model due to its stability and resistance to overfitting.
+
+Limitations: Reduced interpretability compared to a single tree and increased computational cost.
+
+% ------------------------------------------------------------
+
+\paragraph{K-Nearest Neighbors (KNN)}
+
+\textbf{Model Description:}
+A non-parametric, instance-based classifier that assigns labels based on the majority class among the $k$ nearest neighbors in feature space.
+
+Configuration:
+\begin{itemize}
+  \item $k$ = 5 neighbors
+  \item Distance metric: Euclidean
+  \item Weights: distance (inverse distance weighting)
+\end{itemize}
+
+Prediction rule:
+
+$$
+  \hat{y} = \arg\max_{c} \sum_{i \in N_k(x)} w_i \cdot \mathbb{I}(y_i = c)
+$$
+
+where $N_k(x)$ denotes the set of $k$ nearest neighbors and
+$w_i = \frac{1}{d(x, x_i)}$.
+
+\textbf{Rationale for inclusion:}
+KNN represents a distance-based learning paradigm distinct from tree-based and margin-based approaches. Its inclusion enables evaluation of similarity-driven classification behavior under a non-parametric framework.
+
+Limitations: Computationally expensive during prediction and sensitive to feature scaling and high dimensionality.
+
+% ------------------------------------------------------------
+
+\paragraph{Support Vector Machine (SVM)}
+
+\textbf{Model Description:}
+A margin-based classifier that identifies the optimal separating hyperplane by maximizing the margin between classes. The RBF kernel enables modeling of non-linear decision boundaries.
+
+Configuration:
+\begin{itemize}
+  \item Kernel: RBF (Radial Basis Function)
+  \item $C$ = 10
+  \item Gamma: scale
+  \item Class weight: balanced
+\end{itemize}
+
+RBF kernel:
+
+$$
+  K(x_i, x_j) = \exp\left(-\gamma \|x_i - x_j\|^2\right)
+$$
+
+with $\gamma = \frac{1}{n_{\text{features}} \times \mathrm{Var}(X)}$ under the \texttt{scale} setting.
+
+\textbf{Rationale for inclusion:}
+SVM provides a theoretically grounded margin-optimization framework. The RBF kernel enables flexible non-linear modeling in high-dimensional spaces, allowing comparison with ensemble-based and distance-based methods under a distinct optimization paradigm.
+
+Limitations: High computational complexity for large datasets and sensitivity to hyperparameter selection.
+
+
+\subsection{Evaluation Metrics and Computational consideration} % de t lam phan nay cho nha huy
+
+% ============================================================
+\subsubsection{Evaluation Metrics}
+
+Given the multi-class and imbalanced nature of the dataset, multiple complementary metrics were employed to provide a comprehensive performance assessment.
+
+% ------------------------------------------------------------
+
+\paragraph{Balanced Accuracy}
+
+\textbf{Definition:}
+
+$$
+  \text{Balanced Accuracy} = \frac{1}{C} \sum_{i=1}^{C}
+  \frac{TP_i}{TP_i + FN_i}
+$$
+
+This metric assigns equal importance to each class, mitigating the effect of imbalance.
+
+% ------------------------------------------------------------
+
+\paragraph{Per-Class F1-Score}
+
+For each class $i$:
+
+$$
+  \text{Precision}_i = \frac{TP_i}{TP_i + FP_i}
+$$
+
+$$
+  \text{Recall}_i = \frac{TP_i}{TP_i + FN_i}
+$$
+
+$$
+  \text{F1}_i = 2 \cdot
+  \frac{\text{Precision}_i \cdot \text{Recall}_i}
+  {\text{Precision}_i + \text{Recall}_i}
+$$
+
+Provides class-specific performance analysis.
+
+% ------------------------------------------------------------
+
+\paragraph{Macro F1-Score}
+
+$$
+  \text{Macro F1} = \frac{1}{C} \sum_{i=1}^{C} \text{F1}_i
+$$
+
+Evaluates unweighted average performance across classes.
+
+% ------------------------------------------------------------
+
+\paragraph{Weighted F1-Score}
+
+$$
+  \text{Weighted F1} =
+  \sum_{i=1}^{C} w_i \cdot \text{F1}_i
+$$
+
+where
+
+$$
+  w_i = \frac{n_i}{\sum_{j=1}^{C} n_j}
+$$
+
+Accounts for class frequency in aggregation.
+
+% ------------------------------------------------------------
+
+\paragraph{Cohen's Kappa ($\kappa$)}
+
+$$
+  \kappa = \frac{p_o - p_e}{1 - p_e}
+$$
+
+where $p_o$ is observed agreement and $p_e$ is expected agreement by chance.
+
+Measures agreement corrected for chance.
+
+% ------------------------------------------------------------
+
+\paragraph{Confusion Matrix}
+
+A $C \times C$ matrix where element $(i,j)$ represents the number of samples from true class $i$ predicted as class $j$.
+
+Provides detailed inspection of class-level prediction patterns and misclassification structure.
+
+% ============================================================
+\subsubsection{Computational Complexity}
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{lcc}
+    \hline
+    \textbf{Model} & \textbf{Training Complexity} & \textbf{Prediction Complexity} \\
+    \hline
+    Decision Tree  & $O(n d \log n)$              & $O(\log n)$                    \\
+    Random Forest  & $O(t n d \log n)$            & $O(t \log n)$                  \\
+    KNN            & $O(1)$                       & $O(n d)$ per sample            \\
+    SVM (RBF)      & $O(n^2)$ to $O(n^3)$         & $O(sv \cdot d)$                \\
+    \hline
+  \end{tabular}
+  \caption{Computational complexity where $n$ = samples, $d$ = features, $t$ = trees, $sv$ = support vectors}
+  \label{tab:complexity}
+\end{table}
+
