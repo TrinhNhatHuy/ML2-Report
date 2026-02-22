@@ -37,32 +37,88 @@ Scenario & Model & Bal. Acc & Macro F1 & W-F1 & Kappa & Train (s) & Pred (s) & S
 \caption{Overall performance comparison across models with and without SMOTE.}
 \label{tab:overall_comparison}
 \end{table}
-\subsection{SMOTE impact analysis}
+\begin{figure}[H]
+    \centering
+    % Nhớ đổi tên file ảnh tương ứng
+    \includegraphics[width=\textwidth]{images/image.png}
+    \caption{Comparison of overall performance metrics across models, evaluated with and without SMOTE.}
+    \label{fig:overall_performance_charts}
+\end{figure}
+
+As observed in Table~\ref{tab:overall_comparison} and clearly visualized in Figure~\ref{fig:overall_performance_charts}, Random Forest and KNN consistently emerge as the top-performing models across nearly all metrics. Random Forest demonstrates exceptional stability and high predictive power, making it the most robust choice overall. KNN (k=5) follows closely, particularly excelling in Weighted F1-score.
+
+In stark contrast, the Support Vector Machine (SVM) with an RBF kernel exhibits the lowest performance, significantly lagging behind the tree-based and distance-based algorithms in both scenarios. 
+
+Furthermore, the grouped bar charts in Figure~\ref{fig:overall_performance_charts} provide an initial visual intuition regarding the influence of SMOTE. While some models like the Decision Tree show slight positive shifts across the board, others display mixed reactions. This distinct behavior and the underlying trade-offs introduced by data oversampling will be analyzed in detail in Section~\ref{sec:impact_of_smote}.
+\subsection{Impact of SMOTE}
+\label{sec:impact_of_smote}
+
+To isolate and evaluate the specific effect of handling class imbalance, we analyze the absolute changes ($\Delta$) in performance metrics before and after applying SMOTE. Table~\ref{tab:smote_impact_delta} summarizes these numerical variations, while Figure~\ref{fig:smote_impact_chart} provides a visual representation of these shifts across the four models.
+
 \begin{table}[H]
 \centering
 \small
 \begin{tabular}{lcccc}
 \toprule
-Model & $\Delta$ Balance Accuracy & $\Delta$ Macro F1 & $\Delta$ W-F1 & $\Delta$ Kappa \\
+Model & $\Delta$ Balance Acc. & $\Delta$ Macro F1 & $\Delta$ Weighted F1 & $\Delta$ Kappa \\
 \midrule
 Decision Tree & +0.0049 & +0.0075 & +0.0022 & +0.0041 \\
 Random Forest & +0.0095 & -0.0030 & -0.0005 & -0.0010 \\
-KNN (k=5) & +0.0444 & -0.0144 & -0.0067 & -0.0108 \\
-SVM (RBF) & +0.0276 & -0.0299 & -0.0345 & -0.0477 \\
+KNN (k=5)     & +0.0444 & -0.0144 & -0.0067 & -0.0108 \\
+SVM (RBF)     & -0.0091 & -0.0297 & -0.0278 & -0.0407 \\
 \bottomrule
 \end{tabular}
-\caption{Detailed performance change after applying SMOTE.}
-\label{tab:smote_delta_full}
+\caption{Performance metric changes ($\Delta$) after applying SMOTE.}
+\label{tab:smote_impact_delta}
 \end{table}
-Table~\ref{tab:smote_delta_full} shows that SMOTE consistently improves 
-Balanced Accuracy across all models, indicating better recall for minority 
-classes after oversampling. The most significant improvement is observed 
-for KNN, suggesting that distance-based methods benefit substantially from 
-a more balanced class distribution. 
 
-However, the gains in Balanced Accuracy are not always accompanied by 
-improvements in Macro F1, Weighted F1, or Cohen’s Kappa. In particular, 
-Random Forest and SVM exhibit slight to notable declines in these metrics, 
-implying that while minority class detection improves, overall predictive 
-agreement and precision may decrease. This highlights a trade-off between 
-class-balanced performance and global model stability when applying SMOTE.
+\begin{figure}[H]
+    \centering
+    % Nhớ thay 'tên_file_ảnh_của_bạn.png' bằng đường dẫn thực tế, ví dụ: 'images/smote_impact_chart.png'
+    \includegraphics[width=0.9\textwidth]{images/smote.png}
+    \caption{Effect of SMOTE on performance metrics across different models. Positive values indicate an improvement after applying SMOTE.}
+    \label{fig:smote_impact_chart}
+\end{figure}
+
+As detailed in Table~\ref{tab:smote_impact_delta} and visually evident in Figure~\ref{fig:smote_impact_chart}, the impact of SMOTE is highly model-dependent. The results highlight a significant trade-off between minority class recognition and overall model precision across different algorithms.
+
+\begin{itemize}
+    \item \textbf{Comprehensive Improvement (Decision Tree):} The Decision Tree is the only algorithm that demonstrates universal improvement. As seen in the table and the entirely positive bars in the chart, all metrics exhibit slight gains (e.g., Macro F1 increased by +0.0075). By generating synthetic samples, SMOTE successfully clarifies the decision boundaries for underrepresented classes without severely overfitting or corrupting the majority class rules.
+    
+    \item \textbf{The Recall-Precision Trade-off (KNN and Random Forest):} Both Table~\ref{tab:smote_impact_delta} and Figure~\ref{fig:smote_impact_chart} clearly illustrate a trade-off for KNN and Random Forest. For instance, KNN shows a massive spike in Balanced Accuracy (+0.0444), indicating superior minority instance capture (higher recall). However, the accompanying negative values for Macro F1 (-0.0144), Weighted F1 (-0.0067), and Kappa (-0.0108) suggest this comes at the cost of precision. The synthetic data points likely introduce overlaps between classes, causing the models to misclassify majority instances as minority ones.
+    
+    \item \textbf{Performance Degradation (SVM):} Conversely, the SVM with RBF kernel reacts entirely negatively to SMOTE, with all metric changes falling below zero. The dense injection of synthetic instances in the highly dimensional feature space likely blurs the clear margins required by SVM, introducing significant noise and completely degrading the decision hyperplanes.
+\end{itemize}
+\subsection{Computational Cost Analysis}
+\label{sec:computational_cost}
+
+Beyond predictive performance, computational efficiency is a critical factor, especially when dealing with large datasets like Covertype. Table~\ref{tab:computational_complexity} outlines the theoretical time complexity for training and prediction phases across the models, where $n$ is the number of samples, $d$ is the number of features, $t$ is the number of trees in the ensemble, and $sv$ is the number of support vectors.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lllc}
+\toprule
+Model & Purpose & Training Complexity & Prediction Complexity \\
+\midrule
+Decision Tree & Baseline (fast, interpretable) & $\mathcal{O}(n \times d \times \log n)$ & $\mathcal{O}(\log n)$ \\
+Random Forest & Ensemble (expected best model) & $\mathcal{O}(t \times n \times d \times \log n)$ & $\mathcal{O}(t \times \log n)$ \\
+SVM (RBF) & Kernel-based (needs subsampling) & $\mathcal{O}(n^2)$ to $\mathcal{O}(n^3)$ & $\mathcal{O}(sv \times d)$ \\
+% Note: You can add KNN complexity here if you have it, typically O(n*d) for prediction if brute force.
+\bottomrule
+\end{tabular}
+\caption{Theoretical computational complexity of evaluated models.}
+\label{tab:computational_complexity}
+\end{table}
+
+These theoretical complexities align precisely with the empirical execution times observed during our experiments (previously presented in Table~\ref{tab:overall_comparison}):
+
+\begin{itemize}
+    \item \textbf{Decision Tree (The Baseline):} True to its $\mathcal{O}(n \times d \times \log n)$ training complexity, the Decision Tree is exceptionally fast, taking only 8.84 seconds on the original dataset and 74.91 seconds on the massive SMOTE dataset (1,388,170 samples). Its tree-traversal prediction phase ($\mathcal{O}(\log n)$) is nearly instantaneous (under 0.3 seconds).
+    
+    \item \textbf{Random Forest (The Ensemble):} Because it builds $t$ independent trees, its training time scales linearly with $t$. It took roughly 10 times longer to train than the single Decision Tree (92.39 seconds without SMOTE; 572.91 seconds with SMOTE). However, this additional computational cost is justified by it being the most robust and best-performing model overall.
+    
+    \item \textbf{SVM with RBF Kernel (The Bottleneck):} SVM is notoriously slow on large datasets due to its quadratic to cubic training complexity ($\mathcal{O}(n^2)$ to $\mathcal{O}(n^3)$). This theoretical limitation necessitated subsampling the dataset to only 20,000 instances for SVM. Even with less than 5\% of the original data, training took around 10-20 seconds, and prediction was severely bottlenecked ($\mathcal{O}(sv \times d)$), taking up to 223.82 seconds. Running SVM on the full 406,708 or 1.3M SMOTE samples would be computationally prohibitive.
+\end{itemize}
+
+In summary, while Random Forest provides the best predictive capabilities, the single Decision Tree offers an unbeatable balance of speed and acceptable accuracy. SVM, despite its theoretical power, proves too computationally expensive for the scale of the Covertype dataset.
