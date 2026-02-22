@@ -1,1 +1,19 @@
 \section{Conclusion}
+
+\subsection{Summary}
+Looking back at everything we did in this project, we set out with a fairly straightforward question: which machine learning algorithm works best for predicting forest cover types? What we ended up with was a much richer understanding of how differently these models behave when put to work on a large, imbalanced, real-world dataset.
+
+We tested four models: Decision Tree, Random Forest, KNN, and SVM both with and without SMOTE. If we had to pick one clear winner, it would be Random Forest. It was consistently the most reliable across all metrics, handled minority classes well, and generalized robustly across all seven cover types. KNN was surprisingly competitive on the larger classes but its prediction time exceeded 2,000 seconds with SMOTE, which made us realize that raw accuracy isn't the only thing that matters when choosing a model in practice. Decision Tree was the underdog we came to appreciate, it's not the flashiest model, but it trains fast, predicts fast, and you can actually understand what it's doing, which has real value in domains where decisions need to be explained. SVM was the most humbling experience; we had to cut the training data down to 20,000 samples just to make it feasible, and even then it underperformed the others by a noticeable margin. As for SMOTE, it helped with minority class sensitivity but bloated the dataset, slowed everything down, and in some cases actually hurt overall metrics. Knowing when to apply it, and when not to, turned out to be one of the more interesting lessons from this project.
+
+\subsection{Recommendations}
+Based on what we observed, Random Forest is the safest and most practical choice for this kind of large-scale ecological classification task. It delivers strong performance without needing much hand-holding, and SMOTE can be applied if minority class recall is a priority, just be prepared for the significant jump in training time.
+
+If interpretability matters more than squeezing out every last percentage point of accuracy, Decision Tree is a genuinely solid alternative. It runs fast, explains itself, and performs well enough to be useful in real deployment scenarios. KNN is best avoided in production settings unless prediction latency is not a concern, as its computational cost scales poorly with dataset size. SVM, in its standard kernel form, is simply not practical here without moving to approximate or GPU-accelerated implementations. More broadly, SMOTE should be treated as a targeted tool rather than a default step - it is most worthwhile for models that genuinely struggle with imbalance and less justified for ensembles like Random Forest that handle it reasonably well on their own.
+
+\subsection{Future Directions}
+There is plenty of room to build on what we have done here. The most immediate next step would be proper hyperparameter tuning. We used mostly default or lightly adjusted settings, and a more thorough search could meaningfully improve results across all models, particularly Random Forest and SVM.
+
+On the SVM front, exploring scalable alternatives like LinearSVC or GPU-accelerated libraries such as ThunderSVM would allow it to be trained on the full dataset, giving it a much fairer chance at competing with the other models. It would also be worth bringing gradient boosting methods like XGBoost or LightGBM into the comparison, as they are known to perform exceptionally well on tabular data and would serve as a strong benchmark. Beyond the models themselves, applying spatial cross-validation, where the data is split by geographic region rather than randomly would give a more honest picture of how well these models actually generalize to new areas of forest, which is ultimately what matters in a real-world application.
+
+\newpage
+
