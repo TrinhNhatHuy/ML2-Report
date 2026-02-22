@@ -1,0 +1,33 @@
+\section{Introduction}
+\subsection{Background}
+Forest ecosystem management and conservation depend critically on accurate knowledge of land cover composition. Identifying the dominant tree species or forest cover type across large geographic areas is essential for supporting decisions in timber harvesting, wildlife habitat assessment, fire risk management, and ecological monitoring. Traditionally, such classification has relied on field surveys conducted by forestry professionals, a process that is both time-consuming and expensive when applied at scale.
+
+The emergence of machine learning has opened new possibilities for automating this classification task using readily available cartographic and remote sensing data. By learning patterns from labeled observations, machine learning models can predict forest cover types across vast areas without requiring exhaustive manual inspection. This approach has gained significant traction in environmental informatics, where large-scale spatial data is abundant but labeled ground-truth data is costly to obtain.
+
+Given the diversity of machine learning algorithms available today, each with distinct theoretical foundations and practical trade-offs, it is valuable to systematically compare their performance on a well-defined classification task. This study focuses on forest cover type prediction as a benchmark problem, leveraging one of the most widely used ecological datasets in the machine learning community.
+\subsection{Problem Statement}
+Despite the availability of cartographic variables such as elevation, slope, soil type, and hydrological distances, accurately predicting forest cover type remains a challenging multiclass classification problem. The dataset contains seven distinct cover type classes with a highly imbalanced distribution, and its 54-dimensional feature space includes both continuous and binary categorical variables. These characteristics introduce challenges related to class overlap, curse of dimensionality, and model generalization.
+
+No single machine learning algorithm universally dominates across all problem settings. Each model family makes different assumptions about the data. For instance, tree-based models partition the feature space recursively, while distance-based models rely on geometric proximity and margin-based models seek optimal decision boundaries in high-dimensional space. Without an empirical comparison, it is difficult to determine which approach best suits the structural properties of the covertype classification problem.
+
+This project therefore investigates and compares the performance of four machine learning algorithms: Decision Tree, Random Forest, K-Nearest Neighbors (KNN), and Support Vector Machine (SVM) on the Forest CoverType dataset, aiming to identify the most effective approach in terms of classification accuracy, computational efficiency, and generalization capability.
+\subsection{Objectives}
+The primary objectives of this project are as follows:
+
+- To build and train four machine learning classifiers: Decision Tree, Random Forest, KNN, and SVM on the UCI Forest CoverType dataset for multiclass classification.
+
+- To evaluate and compare the performance of these models using appropriate metrics including accuracy, precision, recall, F1-score, and confusion matrices.
+
+- To analyze the strengths and limitations of each algorithm in the context of a high-dimensional, mixed-type ecological dataset.
+
+- To determine which model provides the best trade-off between predictive performance and computational cost for the forest cover type classification task.
+
+- To derive actionable insights regarding model selection for similar large-scale, real-world classification problems in environmental data science.
+\subsection{Dataset Description}
+The Forest CoverType dataset was originally compiled by Jock A. Blackard and Colorado State University and is publicly available through the UCI Machine Learning Repository (Blackard, 1998). It contains cartographic data derived from US Forest Service (USFS) Region 2 Resource Information System records, covering four wilderness areas within the Roosevelt National Forest in northern Colorado: Rawah, Neota, Comanche Peak, and Cache la Poudre. These areas were selected because they represent forests with minimal human disturbance, making the cover types a more direct reflection of natural ecological processes.
+
+The dataset consists of 581,012 instances, each representing a 30×30 meter patch of forest land. Each instance is described by 54 features, comprising 10 continuous quantitative variables and 44 binary categorical variables. The quantitative features capture geographic and topographic information such as elevation (in meters), aspect (azimuth degrees), slope (degrees), horizontal and vertical distances to surface water, distances to roadways and fire points, and hillshade indices at different times of day. The 44 binary features encode four wilderness area designations and 40 soil type categories derived from the USFS Ecological Land Unit (ELU) classification system.
+
+The target variable is the forest cover type, represented as an integer from 1 to 7, corresponding to seven tree species classes: Spruce/Fir (Type 1), Lodgepole Pine (Type 2), Ponderosa Pine (Type 3), Cottonwood/Willow (Type 4), Aspen (Type 5), Douglas-fir (Type 6), and Krummholz (Type 7). The dataset is notably imbalanced, with Lodgepole Pine and Spruce/Fir accounting for the majority of observations, while Cottonwood/Willow and Aspen are considerably underrepresented. This class imbalance is an important consideration when designing and evaluating the classification models in this study.
+
+\newpage
