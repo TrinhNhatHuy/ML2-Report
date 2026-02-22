@@ -64,3 +64,170 @@ H\_Dist\_Fire\_Points & 1511.1 & 1099.9 & 0 & 7173 & 0.96 & 0.87 & 72.8 \\ \bott
 \end{tabular}
 \end{table}
 
+
+\subsection{Feature Analysis}
+
+\subsubsection{Feature Variance Analysis}
+
+The Covertype dataset exhibits significant variability in feature variances, ranging from $5.16 \times 10^{-6}$ to $2.43 \times 10^{6}$. This analysis reveals distinct patterns across different feature categories.
+
+\textbf{Variance Distribution}
+
+The variance analysis (Table~\ref{tab:variance_summary}) shows extreme heterogeneity across features:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lr}
+\hline
+\textbf{Statistic} & \textbf{Value} \\
+\hline
+Mean & $8.01 \times 10^{4}$ \\
+Std. Dev. & $4.04 \times 10^{5}$ \\
+Minimum & $5.16 \times 10^{-6}$ \\
+25th Percentile & $3.25 \times 10^{-3}$ \\
+Median & $2.21 \times 10^{-2}$ \\
+75th Percentile & $8.77 \times 10^{-2}$ \\
+Maximum & $2.43 \times 10^{6}$ \\
+\hline
+\end{tabular}
+\caption{Summary statistics of feature variances}
+\label{tab:variance_summary}
+\end{table}
+
+The top five features by variance are continuous spatial and distance measurements:
+
+\begin{enumerate}
+    \item \textbf{Horizontal\_Distance\_To\_Roadways} ($2.43 \times 10^{6}$): Exhibits the highest variance, indicating substantial variability in forest accessibility across the dataset. This suggests diverse terrain ranging from highly accessible areas near roads to remote wilderness regions.
+    
+    \item \textbf{Horizontal\_Distance\_To\_Fire\_Points} ($1.75 \times 10^{6}$): The second highest variance reflects the heterogeneous distribution of historical fire locations across the study area.
+    
+    \item \textbf{Elevation} ($7.84 \times 10^{4}$): High variance indicates the dataset spans significant elevation gradients, which is crucial for forest type classification as elevation strongly influences vegetation patterns.
+    
+    \item \textbf{Horizontal\_Distance\_To\_Hydrology} ($4.52 \times 10^{4}$): Substantial variance in distance to water sources suggests varying moisture availability across forest sites.
+    
+    \item \textbf{Vertical\_Distance\_To\_Hydrology} ($3.40 \times 10^{3}$): Moderate to high variance reflects diverse topographic positions relative to water sources.
+\end{enumerate}
+
+\textbf{Low-Variance Features}
+
+The majority of low-variance features are binary soil type indicators (40 total soil types). The 5 lowest-variance features are:
+
+\begin{itemize}
+    \item Soil\_Type15 ($5.16 \times 10^{-6}$)
+    \item Soil\_Type7 ($1.81 \times 10^{-4}$)
+    \item Soil\_Type36 ($2.05 \times 10^{-4}$)
+    \item Soil\_Type8 ($3.08 \times 10^{-4}$)
+    \item Soil\_Type37 ($5.13 \times 10^{-4}$)
+\end{itemize}
+
+These extremely low variances indicate rare soil types, present in less than 1\% of observations. Such imbalanced features may:
+\begin{itemize}
+    \item Provide limited discriminative power for classification
+    \item Cause instability in certain machine learning algorithms
+    \item Require special handling (e.g., grouping, removal, or resampling techniques)
+\end{itemize}
+
+\subsubsection{Feature Correlation Analysis}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/data-analysis-correlation-matrix.png}
+    \caption{Correlations Matrix}
+    \label{fig:correlation_matrix   }
+\end{figure}
+
+The correlation matrix reveals several important relationships among continuous features:
+
+\textbf{Strong Positive Correlations}
+
+\begin{itemize}
+    \item \textbf{Aspect $\leftrightarrow$ Hillshade\_3pm} ($r = 0.65$): Strong positive correlation indicates that south-facing slopes (higher aspect values) receive more afternoon sunlight, as expected from solar geometry.
+    
+    \item \textbf{Horizontal\_Distance\_To\_Hydrology $\leftrightarrow$ Vertical\_Distance\_To\_Hydrology} ($r = 0.61$): Strong correlation suggests that sites farther horizontally from water are also typically higher vertically, consistent with valley-to-ridge topographic patterns.
+    
+    \item \textbf{Hillshade\_Noon $\leftrightarrow$ Hillshade\_3pm} ($r = 0.59$): Moderate-to-strong correlation reflects similar illumination patterns at midday and afternoon.
+    
+    \item \textbf{Elevation $\leftrightarrow$ Horizontal\_Distance\_To\_Roadways} ($r = 0.37$): Higher elevations are generally farther from roads, indicating roads are preferentially located in accessible lower-elevation areas.
+    
+    \item \textbf{Elevation $\leftrightarrow$ Horizontal\_Distance\_To\_Hydrology} ($r = 0.31$): Weak-to-moderate positive correlation suggests higher elevations tend to be farther from water sources.
+\end{itemize}
+
+\textbf{Strong Negative Correlation}
+
+\begin{itemize}
+    \item \textbf{Hillshade\_9am $\leftrightarrow$ Hillshade\_3pm} ($r = -0.78$): Strong negative correlation indicates east-facing slopes (high morning illumination) are west-facing in the afternoon (low illumination) and vice versa. This is the strongest correlation in the dataset.
+    
+    \item \textbf{Aspect $\leftrightarrow$ Hillshade\_9am} ($r = -0.58$): Moderate-to-strong negative correlation shows that higher aspect values (south/west-facing) receive less morning sunlight.
+    
+    \item \textbf{Slope $\leftrightarrow$ Hillshade\_Noon} ($r = -0.53$): Steeper slopes receive less direct noon sunlight, consistent with solar angle effects.
+    
+    \item \textbf{Slope $\leftrightarrow$ Hillshade\_9am} ($r = -0.33$): Steeper slopes also receive reduced morning illumination.
+    
+    \item \textbf{Elevation $\leftrightarrow$ Slope} ($r = -0.24$): Weak negative correlation suggests higher elevations have slightly gentler slopes on average.
+\end{itemize}
+
+\textbf{Scaling Requirement}
+
+The variances of the features are very different, with some being up to six orders of magnitude larger than others. Because of this, we need to scale the data before using distance-based algorithms like KNN, SVM, or neural networks. If we do not scale the features, the ones with larger values can dominate the model and affect the results. We can use StandardScaler when the data is normally distributed.
+
+\subsection{Class Distribution}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/Class_distribution_propotion.png}
+    \caption{Correlations Matrix}
+    \label{fig:class-distribution-propotion}
+\end{figure}
+
+The Covertype dataset contains 581,012 observations of forest areas in the Roosevelt National Forest of northern Colorado. Each observation is labeled with one of 7 different forest cover types, as show in figure~\ref{fig:class-distribution-propotion}. Understanding how these classes are distributed is important because it directly affects how we build and evaluate our models.
+
+The dataset includes seven distinct types of forests:
+
+\begin{enumerate}
+    \item \textbf{Spruce/Fir}: High-elevation forests with Engelmann Spruce and Subalpine Fir trees
+    \item \textbf{Lodgepole Pine}: Common mid-elevation pine forests
+    \item \textbf{Ponderosa Pine}: Lower-elevation pine forests that prefer drier and sunnier areas
+    \item \textbf{Cottonwood/Willow}: Deciduous trees found near rivers and streams
+    \item \textbf{Aspen}: Deciduous trees that grow in small patches among coniferous forests
+    \item \textbf{Douglas-fir}: Mixed forests found at moderate elevations
+    \item \textbf{Krummholz}: Stunted, twisted trees that grow at the treeline in harsh, windy conditions
+\end{enumerate}
+
+\subsubsection{Distribution of each Class}
+
+Table~\ref{tab:class_distribution} shows how many observations belong to each forest type:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{clrrr}
+\hline
+\textbf{Class} & \textbf{Cover Type} & \textbf{Count} & \textbf{Percentage} & \textbf{Cumulative \%} \\
+\hline
+2 & Lodgepole Pine & 283,301 & 48.76\% & 48.76\% \\
+1 & Spruce/Fir & 211,840 & 36.46\% & 85.22\% \\
+3 & Ponderosa Pine & 35,754 & 6.15\% & 91.37\% \\
+7 & Krummholz & 20,510 & 3.53\% & 94.90\% \\
+6 & Douglas-fir & 17,367 & 2.99\% & 97.89\% \\
+5 & Aspen & 9,493 & 1.63\% & 99.52\% \\
+4 & Cottonwood/Willow & 2,747 & 0.47\% & 100.00\% \\
+\hline
+\textbf{Total} & & \textbf{581,012} & \textbf{100.00\%} & \\
+\hline
+\end{tabular}
+\caption{Distribution of forest cover types in the Covertype dataset}
+\label{tab:class_distribution}
+\end{table}
+
+\textbf{Class Imbalance Problem}
+
+Looking at the table~\ref{tab:class_distribution}, we can see a major issue: the dataset is heavily imbalanced. This means some forest types appear much more often than others.
+
+Lodgepole Pine (Class 2) is by far the most common, making up almost half of all observations with 283,301 instances. Spruce/Fir (Class 1) is the second most common with 211,840 instances. Together, these two classes account for 85\% of the entire dataset.
+
+On the other end, Cottonwood/Willow (Class 4) is extremely rare with only 2,747 instances, which is just 0.47\% of the data. This means Lodgepole Pine appears about 103 times more often than Cottonwood/Willow. Aspen (Class 5) is also quite rare at only 1.63\% of the dataset.
+
+The remaining three classes (Ponderosa Pine, Krummholz, and Douglas-fir) fall somewhere in the middle, each representing between 3% and 6% of the data.
+
+From an ecological perspective, this distribution actually makes sense. Lodgepole Pine is widespread in the Rocky Mountains because it can grow in many different conditions. Spruce/Fir forests are also very common at higher elevations in this region. On the other hand, Cottonwood and Willow trees only grow near water sources like rivers and streams. Since these riparian areas make up a small portion of the forest, it's natural that this class is rare in the dataset. Similarly, Aspen trees tend to grow in isolated patches rather than large continuous forests, which explains their lower representation. Krummholz only occurs in a narrow band at the treeline where conditions are too harsh for normal trees, so it covers a limited area.
+
+The imbalance ratio is calculated by dividing the largest class by the smallest class: $\frac{283,301}{2,747} = 103.1$. This tells us the majority class has 103 times more samples than the minority class.
