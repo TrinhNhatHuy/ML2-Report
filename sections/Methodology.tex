@@ -1,12 +1,12 @@
 \section{Methodology}
 
-This section describes the systematic approach used to analyze the Covertype dataset, prepare it for machine learning, and evaluate model performance. We organized our methodology into two main phases: data analysis and preprocessing, followed by class imbalance handling and model selection, and ended with model evaluation.
+This section describes the systematic definition and approach used to analyze the Covertype dataset, prepare it for machine learning, and evaluate model performance. We organized our methodology into two main phases: data analysis and preprocessing, followed by class imbalance handling and model selection, and ended with model evaluation.
 
 \subsection{Data Analysis and Preprocessing}
 
 \paragraph{Variance Distribution Analysis}
 
-\textbf{What it is:} Variance measures how much a feature's values spread out from their mean. For a feature $x$ with $n$ samples, variance is calculated as:
+\textbf{Definition} Variance measures how much a feature's values spread out from their mean. For a feature $x$ with $n$ samples, variance is calculated as:
 
 $$\text{Variance} = \sigma^2 = \frac{1}{n} \sum_{i=1}^{n} (x_i - \mu)^2$$
 
@@ -36,7 +36,7 @@ where $r_{xy} \in [-1, 1]$:
     \item $r = -1$: Perfect negative correlation
 \end{itemize}
 
-\textbf{effectiveness:} Correlation analysis reveals:
+\textbf{Effectiveness:} Correlation analysis reveals:
 \begin{itemize}
     \item Feature redundancy (highly correlated features may provide similar information)
     \item Multicollinearity issues that could affect certain models
@@ -45,6 +45,27 @@ where $r_{xy} \in [-1, 1]$:
 \end{itemize}
 
 Strong correlations suggest that some features capture related information, which affects model selection and interpretation.
+
+\paragraph{Statistical Distribution Analysis}
+
+\textbf{Definition:} For each continuous feature, we calculated comprehensive descriptive statistics:
+
+\begin{itemize}
+    \item \textbf{Mean ($\mu$)}: $\mu = \frac{1}{n}\sum_{i=1}^{n} x_i$
+    \item \textbf{Standard Deviation ($\sigma$)}: $\sigma = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(x_i - \mu)^2}$
+    \item \textbf{Minimum and Maximum}: Range of values
+    \item \textbf{Skewness}: $\text{Skew} = \frac{1}{n}\sum_{i=1}^{n}\left(\frac{x_i - \mu}{\sigma}\right)^3$
+    \item \textbf{Kurtosis}: $\text{Kurt} = \frac{1}{n}\sum_{i=1}^{n}\left(\frac{x_i - \mu}{\sigma}\right)^4 - 3$
+    \item \textbf{Coefficient of Variation}: $\text{CV\%} = \frac{\sigma}{\mu} \times 100\%$
+\end{itemize}
+
+\textbf{Effectiveness:}
+
+\textbf{Skewness} measures distribution asymmetry. Skewness = 0 indicates symmetry (like a normal distribution). Positive skewness means a long right tail (many small values, few large ones), while negative skewness indicates a long left tail. Highly skewed features might benefit from transformation.
+
+\textbf{Kurtosis} measures tail heaviness. High kurtosis indicates heavy tails with potential outliers, while low kurtosis suggests a flatter distribution. This helps identify data quality issues.
+
+\textbf{Coefficient of Variation (CV\%)} provides relative variability, allowing fair comparison between features with different scales. Features with high CV\% show high relative variability and may be strong predictors.
 
 \subsection{Class Imbalance Handling} % Lam SMOTE voi Class Weight nha Huy
 
