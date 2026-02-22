@@ -4,7 +4,47 @@ This section describes the systematic approach used to analyze the Covertype dat
 
 \subsection{Data Analysis and Preprocessing}
 
+\paragraph{Variance Distribution Analysis}
 
+\textbf{What it is:} Variance measures how much a feature's values spread out from their mean. For a feature $x$ with $n$ samples, variance is calculated as:
+
+$$\text{Variance} = \sigma^2 = \frac{1}{n} \sum_{i=1}^{n} (x_i - \mu)^2$$
+
+where $\mu$ is the mean of the feature.
+
+We calculated variance for all features and summarized the distribution using:
+\begin{itemize}
+    \item Mean: Average variance across features
+    \item Standard Deviation: Spread of variance values
+    \item Minimum: Lowest variance (identifies near-constant features)
+    \item 25th, 50th, 75th Percentiles: Distribution quartiles
+    \item Maximum: Highest variance (identifies highly variable features)
+\end{itemize}
+
+\textbf{Why:} Variance analysis helps us understand feature informativeness and scale differences. Features with very low variance provide little discriminative information, while features with vastly different variances may require scaling for certain algorithms. This analysis directly informs our decision about whether feature scaling is necessary.
+
+\paragraph{Correlation Analysis}
+
+\textbf{Definition:} Correlation measures the linear relationship between two features. We computed the Pearson correlation coefficient for all pairs of continuous features:
+
+$$r_{xy} = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i - \bar{x})^2}\sqrt{\sum_{i=1}^{n}(y_i - \bar{y})^2}}$$
+
+where $r_{xy} \in [-1, 1]$:
+\begin{itemize}
+    \item $r = 1$: Perfect positive correlation
+    \item $r = 0$: No linear correlation
+    \item $r = -1$: Perfect negative correlation
+\end{itemize}
+
+\textbf{effectiveness:} Correlation analysis reveals:
+\begin{itemize}
+    \item Feature redundancy (highly correlated features may provide similar information)
+    \item Multicollinearity issues that could affect certain models
+    \item Domain relationships between variables
+    \item Potential feature engineering opportunities
+\end{itemize}
+
+Strong correlations suggest that some features capture related information, which affects model selection and interpretation.
 
 \subsection{Class Imbalance Handling} % Lam SMOTE voi Class Weight nha Huy
 
