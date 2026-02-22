@@ -14,11 +14,11 @@ where $\mu$ is the mean of the feature.
 
 We calculated variance for all features and summarized the distribution using:
 \begin{itemize}
-  \item Mean: Average variance across features
-  \item Standard Deviation: Spread of variance values
-  \item Minimum: Lowest variance (identifies near-constant features)
-  \item 25th, 50th, 75th Percentiles: Distribution quartiles
-  \item Maximum: Highest variance (identifies highly variable features)
+    \item Mean: Average variance across features
+    \item Standard Deviation: Spread of variance values
+    \item Minimum: Lowest variance (identifies near-constant features)
+    \item 25th, 50th, 75th Percentiles: Distribution quartiles
+    \item Maximum: Highest variance (identifies highly variable features)
 \end{itemize}
 
 \textbf{Why:} Variance analysis helps us understand feature informativeness and scale differences. Features with very low variance provide little discriminative information, while features with vastly different variances may require scaling for certain algorithms. This analysis directly informs our decision about whether feature scaling is necessary.
@@ -31,17 +31,17 @@ $$r_{xy} = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^
 
 where $r_{xy} \in [-1, 1]$:
 \begin{itemize}
-  \item $r = 1$: Perfect positive correlation
-  \item $r = 0$: No linear correlation
-  \item $r = -1$: Perfect negative correlation
+    \item $r = 1$: Perfect positive correlation
+    \item $r = 0$: No linear correlation
+    \item $r = -1$: Perfect negative correlation
 \end{itemize}
 
 \textbf{Effectiveness:} Correlation analysis reveals:
 \begin{itemize}
-  \item Feature redundancy (highly correlated features may provide similar information)
-  \item Multicollinearity issues that could affect certain models
-  \item Domain relationships between variables
-  \item Potential feature engineering opportunities
+    \item Feature redundancy (highly correlated features may provide similar information)
+    \item Multicollinearity issues that could affect certain models
+    \item Domain relationships between variables
+    \item Potential feature engineering opportunities
 \end{itemize}
 
 Strong correlations suggest that some features capture related information, which affects model selection and interpretation.
@@ -51,12 +51,12 @@ Strong correlations suggest that some features capture related information, whic
 \textbf{Definition:} For each continuous feature, we calculated comprehensive descriptive statistics:
 
 \begin{itemize}
-  \item \textbf{Mean ($\mu$)}: $\mu = \frac{1}{n}\sum_{i=1}^{n} x_i$
-  \item \textbf{Standard Deviation ($\sigma$)}: $\sigma = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(x_i - \mu)^2}$
-  \item \textbf{Minimum and Maximum}: Range of values
-  \item \textbf{Skewness}: $\text{Skew} = \frac{1}{n}\sum_{i=1}^{n}\left(\frac{x_i - \mu}{\sigma}\right)^3$
-  \item \textbf{Kurtosis}: $\text{Kurt} = \frac{1}{n}\sum_{i=1}^{n}\left(\frac{x_i - \mu}{\sigma}\right)^4 - 3$
-  \item \textbf{Coefficient of Variation}: $\text{CV\%} = \frac{\sigma}{\mu} \times 100\%$
+    \item \textbf{Mean ($\mu$)}: $\mu = \frac{1}{n}\sum_{i=1}^{n} x_i$
+    \item \textbf{Standard Deviation ($\sigma$)}: $\sigma = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(x_i - \mu)^2}$
+    \item \textbf{Minimum and Maximum}: Range of values
+    \item \textbf{Skewness}: $\text{Skew} = \frac{1}{n}\sum_{i=1}^{n}\left(\frac{x_i - \mu}{\sigma}\right)^3$
+    \item \textbf{Kurtosis}: $\text{Kurt} = \frac{1}{n}\sum_{i=1}^{n}\left(\frac{x_i - \mu}{\sigma}\right)^4 - 3$
+    \item \textbf{Coefficient of Variation}: $\text{CV\%} = \frac{\sigma}{\mu} \times 100\%$
 \end{itemize}
 
 \textbf{Effectiveness:}
@@ -78,19 +78,19 @@ $$p_i^{\text{train}} = p_i^{\text{test}} = p_i^{\text{original}}$$
 
 We used a 70/30 split ratio:
 \begin{itemize}
-  \item Training: 70\% of data
-  \item Test: 30\% of data
-  \item Random state: 42 (for reproducibility)
+    \item Training: 70\% of data
+    \item Test: 30\% of data
+    \item Random state: 42 (for reproducibility)
 \end{itemize}
 
 Standard random splitting can be problematic for imbalanced datasets. With rare classes, random splitting might accidentally place most or all instances of a rare class in one set, making training or evaluation unreliable or impossible.
 
 Stratified splitting guarantees proportional representation of all classes in both sets, ensuring:
 \begin{itemize}
-  \item Every class appears in training data for learning
-  \item Every class appears in test data for evaluation
-  \item Training and test distributions match the real-world distribution
-  \item Reliable performance estimates across all classes
+    \item Every class appears in training data for learning
+    \item Every class appears in test data for evaluation
+    \item Training and test distributions match the real-world distribution
+    \item Reliable performance estimates across all classes
 \end{itemize}
 
 \paragraph{Standard Scaling}
@@ -103,24 +103,24 @@ where $\mu$ is the feature mean and $\sigma$ is the standard deviation.
 
 \textbf{Critical implementation}: To prevent data leakage, we must:
 \begin{enumerate}
-  \item Fit the scaler on training data only (calculate $\mu$ and $\sigma$ from training)
-  \item Transform training data using these parameters
-  \item Transform test data using the same parameters from step 1
+    \item Fit the scaler on training data only (calculate $\mu$ and $\sigma$ from training)
+    \item Transform training data using these parameters
+    \item Transform test data using the same parameters from step 1
 \end{enumerate}
 
 Features often have vastly different scales (e.g., elevation in thousands of meters vs. binary 0/1 indicators). Without scaling:
 
 \begin{itemize}
-  \item \textbf{Distance-based algorithms} (KNN, SVM) are dominated by high variance features because distance calculations treat all features equally
-  \item \textbf{Gradient-based optimization} (neural networks, logistic regression) may converge slowly or poorly
-  \item \textbf{Feature importance} becomes difficult to interpret when scales differ
+    \item \textbf{Distance-based algorithms} (KNN, SVM) are dominated by high variance features because distance calculations treat all features equally
+    \item \textbf{Gradient-based optimization} (neural networks, logistic regression) may converge slowly or poorly
+    \item \textbf{Feature importance} becomes difficult to interpret when scales differ
 \end{itemize}
 
 We chose StandardScaler over alternatives because:
 \begin{itemize}
-  \item \textbf{vs. Min-Max Scaling}: More robust to outliers; doesn't compress data into fixed [0,1] range
-  \item \textbf{vs. No Scaling}: Essential for KNN and SVM; good practice even for tree based models
-  \item \textbf{vs. Robust Scaler}: Standard scaler is simpler and works well when data is roughly normal
+    \item \textbf{vs. Min-Max Scaling}: More robust to outliers; doesn't compress data into fixed [0,1] range
+    \item \textbf{vs. No Scaling}: Essential for KNN and SVM; good practice even for tree based models
+    \item \textbf{vs. Robust Scaler}: Standard scaler is simpler and works well when data is roughly normal
 \end{itemize}
 
 StandardScaler maintains the relative distribution shape while ensuring features contribute equally to distance calculations.
@@ -152,7 +152,7 @@ One neighbor $\mathbf{x}_{zi}$ is randomly chosen from the $k$ nearest neighbors
 A new synthetic instance $\mathbf{x}_{new}$ is created by interpolating between $\mathbf{x}_i$ and $\mathbf{x}_{zi}$ according to the following formula:
 
 \begin{equation}
-  \mathbf{x}_{new} = \mathbf{x}_i + \lambda \times (\mathbf{x}_{zi} - \mathbf{x}_i)
+    \mathbf{x}_{new} = \mathbf{x}_i + \lambda \times (\mathbf{x}_{zi} - \mathbf{x}_i)
 \end{equation}
 
 \noindent where $\lambda$ is a random number drawn uniformly from the interval $[0, 1]$. This places the synthetic sample at a random point along the line segment connecting the two neighbors in feature space, ensuring the generated instance is not simply a copy of either parent but a genuinely new point within the local data manifold of the minority class.
@@ -165,24 +165,24 @@ One important property of this approach is that SMOTE operates entirely in featu
 The effect of SMOTE on our training data was substantial. The original distribution of 406,708 samples was expanded to 1,388,170 samples with every class balanced at 198,310 instances, as summarized in Table~\ref{tab:smote_distribution}.
 
 \begin{table}[h]
-  \centering
-  \caption{Class distribution before and after SMOTE}
-  \label{tab:smote_distribution}
-  \begin{tabular}{llrr}
-    \toprule
-    \textbf{Type}  & \textbf{Cover Type} & \textbf{Before SMOTE} & \textbf{After SMOTE} \\
-    \midrule
-    Type 1         & Spruce/Fir          & 148,288               & 198,310              \\
-    Type 2         & Lodgepole Pine      & 198,310               & 198,310              \\
-    Type 3         & Ponderosa Pine      & 25,028                & 198,310              \\
-    Type 4         & Cottonwood/Willow   & 1,923                 & 198,310              \\
-    Type 5         & Aspen               & 6,645                 & 198,310              \\
-    Type 6         & Douglas-fir         & 12,157                & 198,310              \\
-    Type 7         & Krummholz           & 14,357                & 198,310              \\
-    \midrule
-    \textbf{Total} &                     & \textbf{406,708}      & \textbf{1,388,170}   \\
-    \bottomrule
-  \end{tabular}
+    \centering
+    \caption{Class distribution before and after SMOTE}
+    \label{tab:smote_distribution}
+    \begin{tabular}{llrr}
+        \toprule
+        \textbf{Type}  & \textbf{Cover Type} & \textbf{Before SMOTE} & \textbf{After SMOTE} \\
+        \midrule
+        Type 1         & Spruce/Fir          & 148,288               & 198,310              \\
+        Type 2         & Lodgepole Pine      & 198,310               & 198,310              \\
+        Type 3         & Ponderosa Pine      & 25,028                & 198,310              \\
+        Type 4         & Cottonwood/Willow   & 1,923                 & 198,310              \\
+        Type 5         & Aspen               & 6,645                 & 198,310              \\
+        Type 6         & Douglas-fir         & 12,157                & 198,310              \\
+        Type 7         & Krummholz           & 14,357                & 198,310              \\
+        \midrule
+        \textbf{Total} &                     & \textbf{406,708}      & \textbf{1,388,170}   \\
+        \bottomrule
+    \end{tabular}
 \end{table}
 
 \noindent It is worth noting that while perfect class balance is theoretically appealing, generating over 980,000 synthetic samples introduces a significant computational burden, particularly for models that scale poorly with training set size. This trade-off between minority class fairness and practical feasibility is a central tension explored throughout our experiments.
@@ -192,7 +192,7 @@ The effect of SMOTE on our training data was substantial. The original distribut
 In addition to SMOTE, class weighting was applied as a lightweight complementary strategy to further address class imbalance during model training. For Decision Tree, Random Forest, and SVM, the \texttt{class\_weight=`balanced'} parameter was enabled. This instructs the model to inversely weight each class by its frequency, penalizing misclassification of minority classes more heavily during the optimization process. Concretely, the weight assigned to each class $c$ is computed as:
 
 \begin{equation}
-  w_c = \frac{n}{k \times n_c}
+    w_c = \frac{n}{k \times n_c}
 \end{equation}
 
 \noindent where $n$ is the total number of training samples, $k$ is the number of classes, and $n_c$ is the number of samples in class $c$. Under this scheme, a rare class like Type 4 with only 1,923 samples receives a weight approximately 103 times higher than Type 2, effectively forcing the model to treat each minority misclassification as far more costly during learning.
@@ -214,10 +214,10 @@ A tree-structured classifier that recursively partitions the feature space using
 
 Configuration:
 \begin{itemize}
-  \item Max depth: 20
-  \item Min samples split: 5
-  \item Class weight: balanced
-  \item Criterion: Gini impurity
+    \item Max depth: 20
+    \item Min samples split: 5
+    \item Class weight: balanced
+    \item Criterion: Gini impurity
 \end{itemize}
 
 \textbf{Rationale for inclusion:}
@@ -234,17 +234,17 @@ An ensemble learning method that constructs multiple decision trees using bootst
 
 Configuration:
 \begin{itemize}
-  \item Number of trees: 100
-  \item Max depth: 20 (per tree)
-  \item Min samples split: 5 (per tree)
-  \item Class weight: balanced
-  \item Bootstrap: True
+    \item Number of trees: 100
+    \item Max depth: 20 (per tree)
+    \item Min samples split: 5 (per tree)
+    \item Class weight: balanced
+    \item Bootstrap: True
 \end{itemize}
 
 Each tree is trained on:
 \begin{itemize}
-  \item A bootstrap sample of the training data
-  \item A random subset of features at each split
+    \item A bootstrap sample of the training data
+    \item A random subset of features at each split
 \end{itemize}
 
 Final prediction: Majority vote across all trees.
@@ -254,7 +254,7 @@ Random Forest reduces variance through ensemble averaging and generally provides
 
 Limitations: Reduced interpretability compared to a single tree and increased computational cost.
 
-% ------------------------------------------------------------
+
 
 \paragraph{K-Nearest Neighbors (KNN)}
 
@@ -263,15 +263,15 @@ A non-parametric, instance-based classifier that assigns labels based on the maj
 
 Configuration:
 \begin{itemize}
-  \item $k$ = 5 neighbors
-  \item Distance metric: Euclidean
-  \item Weights: distance (inverse distance weighting)
+    \item $k$ = 5 neighbors
+    \item Distance metric: Euclidean
+    \item Weights: distance (inverse distance weighting)
 \end{itemize}
 
 Prediction rule:
 
 $$
-  \hat{y} = \arg\max_{c} \sum_{i \in N_k(x)} w_i \cdot \mathbb{I}(y_i = c)
+    \hat{y} = \arg\max_{c} \sum_{i \in N_k(x)} w_i \cdot \mathbb{I}(y_i = c)
 $$
 
 where $N_k(x)$ denotes the set of $k$ nearest neighbors and
@@ -291,22 +291,22 @@ A margin-based classifier that identifies the optimal separating hyperplane by m
 
 Configuration:
 \begin{itemize}
-  \item Kernel: RBF (Radial Basis Function)
-  \item $C$ = 10
-  \item Gamma: scale
-  \item Class weight: balanced
+    \item Kernel: RBF (Radial Basis Function)
+    \item $C$ = 10
+    \item Gamma: scale
+    \item Class weight: balanced
 \end{itemize}
 
 RBF kernel:
 
 $$
-  K(x_i, x_j) = \exp\left(-\gamma \|x_i - x_j\|^2\right)
+    K(x_i, x_j) = \exp\left(-\gamma \|x_i - x_j\|^2\right)
 $$
 
 with $\gamma = \frac{1}{n_{\text{features}} \times \mathrm{Var}(X)}$ under the \texttt{scale} setting.
 
 \textbf{Rationale for inclusion:}
-SVM provides a theoretically grounded margin-optimization framework. The RBF kernel enables flexible non-linear modeling in high-dimensional spaces, allowing comparison with ensemble-based and distance-based methods under a distinct optimization paradigm.
+SVM provides a theoretically grounded margin-optimization framework. The RBF kernel enables flexible non-linear modeling in high dimensional spaces, allowing comparison with ensemble-based and distance-based methods under a distinct optimization paradigm.
 
 Limitations: High computational complexity for large datasets and sensitivity to hyperparameter selection.
 
@@ -325,8 +325,8 @@ Given the multi-class and imbalanced nature of the dataset, multiple complementa
 \textbf{Definition:}
 
 $$
-  \text{Balanced Accuracy} = \frac{1}{C} \sum_{i=1}^{C}
-  \frac{TP_i}{TP_i + FN_i}
+    \text{Balanced Accuracy} = \frac{1}{C} \sum_{i=1}^{C}
+    \frac{TP_i}{TP_i + FN_i}
 $$
 
 This metric assigns equal importance to each class, mitigating the effect of imbalance.
@@ -338,17 +338,17 @@ This metric assigns equal importance to each class, mitigating the effect of imb
 For each class $i$:
 
 $$
-  \text{Precision}_i = \frac{TP_i}{TP_i + FP_i}
+    \text{Precision}_i = \frac{TP_i}{TP_i + FP_i}
 $$
 
 $$
-  \text{Recall}_i = \frac{TP_i}{TP_i + FN_i}
+    \text{Recall}_i = \frac{TP_i}{TP_i + FN_i}
 $$
 
 $$
-  \text{F1}_i = 2 \cdot
-  \frac{\text{Precision}_i \cdot \text{Recall}_i}
-  {\text{Precision}_i + \text{Recall}_i}
+    \text{F1}_i = 2 \cdot
+    \frac{\text{Precision}_i \cdot \text{Recall}_i}
+    {\text{Precision}_i + \text{Recall}_i}
 $$
 
 Provides class-specific performance analysis.
@@ -358,7 +358,7 @@ Provides class-specific performance analysis.
 \paragraph{Macro F1-Score}
 
 $$
-  \text{Macro F1} = \frac{1}{C} \sum_{i=1}^{C} \text{F1}_i
+    \text{Macro F1} = \frac{1}{C} \sum_{i=1}^{C} \text{F1}_i
 $$
 
 Evaluates unweighted average performance across classes.
@@ -368,14 +368,14 @@ Evaluates unweighted average performance across classes.
 \paragraph{Weighted F1-Score}
 
 $$
-  \text{Weighted F1} =
-  \sum_{i=1}^{C} w_i \cdot \text{F1}_i
+    \text{Weighted F1} =
+    \sum_{i=1}^{C} w_i \cdot \text{F1}_i
 $$
 
 where
 
 $$
-  w_i = \frac{n_i}{\sum_{j=1}^{C} n_j}
+    w_i = \frac{n_i}{\sum_{j=1}^{C} n_j}
 $$
 
 Accounts for class frequency in aggregation.
@@ -385,7 +385,7 @@ Accounts for class frequency in aggregation.
 \paragraph{Cohen's Kappa ($\kappa$)}
 
 $$
-  \kappa = \frac{p_o - p_e}{1 - p_e}
+    \kappa = \frac{p_o - p_e}{1 - p_e}
 $$
 
 where $p_o$ is observed agreement and $p_e$ is expected agreement by chance.
@@ -404,18 +404,18 @@ Provides detailed inspection of class-level prediction patterns and misclassific
 \subsubsection{Computational Complexity}
 
 \begin{table}[htbp]
-  \centering
-  \begin{tabular}{lcc}
-    \hline
-    \textbf{Model} & \textbf{Training Complexity} & \textbf{Prediction Complexity} \\
-    \hline
-    Decision Tree  & $O(n d \log n)$              & $O(\log n)$                    \\
-    Random Forest  & $O(t n d \log n)$            & $O(t \log n)$                  \\
-    KNN            & $O(1)$                       & $O(n d)$ per sample            \\
-    SVM (RBF)      & $O(n^2)$ to $O(n^3)$         & $O(sv \cdot d)$                \\
-    \hline
-  \end{tabular}
-  \caption{Computational complexity where $n$ = samples, $d$ = features, $t$ = trees, $sv$ = support vectors}
-  \label{tab:complexity}
+    \centering
+    \begin{tabular}{lcc}
+        \hline
+        \textbf{Model} & \textbf{Training Complexity} & \textbf{Prediction Complexity} \\
+        \hline
+        Decision Tree  & $O(n d \log n)$              & $O(\log n)$                    \\
+        Random Forest  & $O(t n d \log n)$            & $O(t \log n)$                  \\
+        KNN            & $O(1)$                       & $O(n d)$ per sample            \\
+        SVM (RBF)      & $O(n^2)$ to $O(n^3)$         & $O(sv \cdot d)$                \\
+        \hline
+    \end{tabular}
+    \caption{Computational complexity where $n$ = samples, $d$ = features, $t$ = trees, $sv$ = support vectors}
+    \label{tab:complexity}
 \end{table}
 

@@ -19,18 +19,18 @@ The Forest CoverType dataset from the UCI Machine learning repository is used in
 The Feature set is composed into two main groups. The first group includes ten continuous variables describing terrain characteristics and spatial distances, these values meansured on hetorogenous scales, which whill be consider more carefully with scale-sensitive machine learning models. The second groups consists of forty-four binary indicator variables. All of these values are encoded using one-hot represenation with values in {0,1}. As these features are already normalized into binary indicators, therefor no additional scaling is required. These features include:
 
 \begin{enumerate}
-    \item \textbf{Continuous Features (n=10)}: 
-    \begin{itemize}
-        \item Topographic: Elevation, Aspect, Slope
-        \item Distance metrics: to hydrology, roadways, fire points
-        \item Solar radiation: Hillshade at 9am, noon, 3pm
-    \end{itemize}
-    
+    \item \textbf{Continuous Features (n=10)}:
+          \begin{itemize}
+              \item Topographic: Elevation, Aspect, Slope
+              \item Distance metrics: to hydrology, roadways, fire points
+              \item Solar radiation: Hillshade at 9am, noon, 3pm
+          \end{itemize}
+
     \item \textbf{Binary Features (n=44)}:
-    \begin{itemize}
-        \item Wilderness Areas (n=4): One-hot encoded wilderness designation
-        \item Soil Types (n=40): One-hot encoded soil classification
-    \end{itemize}
+          \begin{itemize}
+              \item Wilderness Areas (n=4): One-hot encoded wilderness designation
+              \item Soil Types (n=40): One-hot encoded soil classification
+          \end{itemize}
 \end{enumerate}
 
 \subsection{Statistics Analysis}
@@ -41,27 +41,27 @@ Table \ref{tab:descriptive_stats} presents descriptive statistics for the ten co
 
 Regarding distributional shape,  most features in the dataset show decent skewness (i.e. $|$skewness$|$ < 1), showing a approximate symmetry in the dataset.
 
-Overall, the dataset continuous features have a wide range of scales and variability across features, therefore proff the effectiveness for classification task, prior for machine learing algorithm that sensitive to feature magnitude. 
+Overall, the dataset continuous features have a wide range of scales and variability across features, therefore proff the effectiveness for classification task, prior for machine learing algorithm that sensitive to feature magnitude.
 
 \begin{table}[h]
-\centering
-\caption{Descriptive Statistics for Continuous Features}
-\label{tab:descriptive_stats}
-\small
-\begin{tabular}{@{}lrrrrrrr@{}}
-\toprule
-\textbf{Feature} & \textbf{Mean} & \textbf{Std} & \textbf{Min} & \textbf{Max} & \textbf{Skew} & \textbf{Kurt} & \textbf{CV\%} \\ \midrule
-Elevation & 2959.4 & 279.8 & 1859 & 3858 & $-0.08$ & $-0.41$ & 9.5 \\
-Aspect & 155.7 & 111.9 & 0 & 360 & 0.32 & $-1.26$ & 71.9 \\
-Slope & 14.1 & 7.5 & 0 & 66 & 0.91 & 1.04 & 53.2 \\
-H\_Dist\_Hydrology & 269.4 & 212.5 & 0 & 1397 & 1.09 & 1.32 & 78.9 \\
-V\_Dist\_Hydrology & 46.4 & 58.3 & $-173$ & 601 & 1.78 & 5.82 & 125.6 \\
-H\_Dist\_Roadways & 2350.1 & 1559.3 & 0 & 7117 & 0.76 & 0.25 & 66.4 \\
-Hillshade\_9am & 212.1 & 26.8 & 0 & 254 & $-1.05$ & 1.81 & 12.6 \\
-Hillshade\_Noon & 223.3 & 19.8 & 0 & 254 & $-1.84$ & 5.95 & 8.9 \\
-Hillshade\_3pm & 142.5 & 38.3 & 0 & 254 & 0.23 & $-0.54$ & 26.9 \\
-H\_Dist\_Fire\_Points & 1511.1 & 1099.9 & 0 & 7173 & 0.96 & 0.87 & 72.8 \\ \bottomrule
-\end{tabular}
+    \centering
+    \caption{Descriptive Statistics for Continuous Features}
+    \label{tab:descriptive_stats}
+    \small
+    \begin{tabular}{@{}lrrrrrrr@{}}
+        \toprule
+        \textbf{Feature}      & \textbf{Mean} & \textbf{Std} & \textbf{Min} & \textbf{Max} & \textbf{Skew} & \textbf{Kurt} & \textbf{CV\%} \\ \midrule
+        Elevation             & 2959.4        & 279.8        & 1859         & 3858         & $-0.08$       & $-0.41$       & 9.5           \\
+        Aspect                & 155.7         & 111.9        & 0            & 360          & 0.32          & $-1.26$       & 71.9          \\
+        Slope                 & 14.1          & 7.5          & 0            & 66           & 0.91          & 1.04          & 53.2          \\
+        H\_Dist\_Hydrology    & 269.4         & 212.5        & 0            & 1397         & 1.09          & 1.32          & 78.9          \\
+        V\_Dist\_Hydrology    & 46.4          & 58.3         & $-173$       & 601          & 1.78          & 5.82          & 125.6         \\
+        H\_Dist\_Roadways     & 2350.1        & 1559.3       & 0            & 7117         & 0.76          & 0.25          & 66.4          \\
+        Hillshade\_9am        & 212.1         & 26.8         & 0            & 254          & $-1.05$       & 1.81          & 12.6          \\
+        Hillshade\_Noon       & 223.3         & 19.8         & 0            & 254          & $-1.84$       & 5.95          & 8.9           \\
+        Hillshade\_3pm        & 142.5         & 38.3         & 0            & 254          & 0.23          & $-0.54$       & 26.9          \\
+        H\_Dist\_Fire\_Points & 1511.1        & 1099.9       & 0            & 7173         & 0.96          & 0.87          & 72.8          \\ \bottomrule
+    \end{tabular}
 \end{table}
 
 
@@ -76,35 +76,35 @@ The Covertype dataset exhibits significant variability in feature variances, ran
 The variance analysis (Table~\ref{tab:variance_summary}) shows extreme heterogeneity across features:
 
 \begin{table}[h]
-\centering
-\begin{tabular}{lr}
-\hline
-\textbf{Statistic} & \textbf{Value} \\
-\hline
-Mean & $8.01 \times 10^{4}$ \\
-Std. Dev. & $4.04 \times 10^{5}$ \\
-Minimum & $5.16 \times 10^{-6}$ \\
-25th Percentile & $3.25 \times 10^{-3}$ \\
-Median & $2.21 \times 10^{-2}$ \\
-75th Percentile & $8.77 \times 10^{-2}$ \\
-Maximum & $2.43 \times 10^{6}$ \\
-\hline
-\end{tabular}
-\caption{Summary statistics of feature variances}
-\label{tab:variance_summary}
+    \centering
+    \begin{tabular}{lr}
+        \hline
+        \textbf{Statistic} & \textbf{Value}        \\
+        \hline
+        Mean               & $8.01 \times 10^{4}$  \\
+        Std. Dev.          & $4.04 \times 10^{5}$  \\
+        Minimum            & $5.16 \times 10^{-6}$ \\
+        25th Percentile    & $3.25 \times 10^{-3}$ \\
+        Median             & $2.21 \times 10^{-2}$ \\
+        75th Percentile    & $8.77 \times 10^{-2}$ \\
+        Maximum            & $2.43 \times 10^{6}$  \\
+        \hline
+    \end{tabular}
+    \caption{Summary statistics of feature variances}
+    \label{tab:variance_summary}
 \end{table}
 
 The top five features by variance are continuous spatial and distance measurements:
 
 \begin{enumerate}
     \item \textbf{Horizontal\_Distance\_To\_Roadways} ($2.43 \times 10^{6}$): Exhibits the highest variance, indicating substantial variability in forest accessibility across the dataset. This suggests diverse terrain ranging from highly accessible areas near roads to remote wilderness regions.
-    
+
     \item \textbf{Horizontal\_Distance\_To\_Fire\_Points} ($1.75 \times 10^{6}$): The second highest variance reflects the heterogeneous distribution of historical fire locations across the study area.
-    
+
     \item \textbf{Elevation} ($7.84 \times 10^{4}$): High variance indicates the dataset spans significant elevation gradients, which is crucial for forest type classification as elevation strongly influences vegetation patterns.
-    
+
     \item \textbf{Horizontal\_Distance\_To\_Hydrology} ($4.52 \times 10^{4}$): Substantial variance in distance to water sources suggests varying moisture availability across forest sites.
-    
+
     \item \textbf{Vertical\_Distance\_To\_Hydrology} ($3.40 \times 10^{3}$): Moderate to high variance reflects diverse topographic positions relative to water sources.
 \end{enumerate}
 
@@ -142,13 +142,13 @@ The correlation matrix reveals several important relationships among continuous 
 
 \begin{itemize}
     \item \textbf{Aspect $\leftrightarrow$ Hillshade\_3pm} ($r = 0.65$): Strong positive correlation indicates that south-facing slopes (higher aspect values) receive more afternoon sunlight, as expected from solar geometry.
-    
+
     \item \textbf{Horizontal\_Distance\_To\_Hydrology $\leftrightarrow$ Vertical\_Distance\_To\_Hydrology} ($r = 0.61$): Strong correlation suggests that sites farther horizontally from water are also typically higher vertically, consistent with valley-to-ridge topographic patterns.
-    
+
     \item \textbf{Hillshade\_Noon $\leftrightarrow$ Hillshade\_3pm} ($r = 0.59$): Moderate-to-strong correlation reflects similar illumination patterns at midday and afternoon.
-    
+
     \item \textbf{Elevation $\leftrightarrow$ Horizontal\_Distance\_To\_Roadways} ($r = 0.37$): Higher elevations are generally farther from roads, indicating roads are preferentially located in accessible lower-elevation areas.
-    
+
     \item \textbf{Elevation $\leftrightarrow$ Horizontal\_Distance\_To\_Hydrology} ($r = 0.31$): Weak-to-moderate positive correlation suggests higher elevations tend to be farther from water sources.
 \end{itemize}
 
@@ -156,13 +156,13 @@ The correlation matrix reveals several important relationships among continuous 
 
 \begin{itemize}
     \item \textbf{Hillshade\_9am $\leftrightarrow$ Hillshade\_3pm} ($r = -0.78$): Strong negative correlation indicates east-facing slopes (high morning illumination) are west-facing in the afternoon (low illumination) and vice versa. This is the strongest correlation in the dataset.
-    
+
     \item \textbf{Aspect $\leftrightarrow$ Hillshade\_9am} ($r = -0.58$): Moderate-to-strong negative correlation shows that higher aspect values (south/west-facing) receive less morning sunlight.
-    
+
     \item \textbf{Slope $\leftrightarrow$ Hillshade\_Noon} ($r = -0.53$): Steeper slopes receive less direct noon sunlight, consistent with solar angle effects.
-    
+
     \item \textbf{Slope $\leftrightarrow$ Hillshade\_9am} ($r = -0.33$): Steeper slopes also receive reduced morning illumination.
-    
+
     \item \textbf{Elevation $\leftrightarrow$ Slope} ($r = -0.24$): Weak negative correlation suggests higher elevations have slightly gentler slopes on average.
 \end{itemize}
 
@@ -198,24 +198,24 @@ The dataset includes seven distinct types of forests:
 Table~\ref{tab:class_distribution} shows how many observations belong to each forest type:
 
 \begin{table}[h]
-\centering
-\begin{tabular}{clrrr}
-\hline
-\textbf{Class} & \textbf{Cover Type} & \textbf{Count} & \textbf{Percentage} & \textbf{Cumulative \%} \\
-\hline
-2 & Lodgepole Pine & 283,301 & 48.76\% & 48.76\% \\
-1 & Spruce/Fir & 211,840 & 36.46\% & 85.22\% \\
-3 & Ponderosa Pine & 35,754 & 6.15\% & 91.37\% \\
-7 & Krummholz & 20,510 & 3.53\% & 94.90\% \\
-6 & Douglas-fir & 17,367 & 2.99\% & 97.89\% \\
-5 & Aspen & 9,493 & 1.63\% & 99.52\% \\
-4 & Cottonwood/Willow & 2,747 & 0.47\% & 100.00\% \\
-\hline
-\textbf{Total} & & \textbf{581,012} & \textbf{100.00\%} & \\
-\hline
-\end{tabular}
-\caption{Distribution of forest cover types in the Covertype dataset}
-\label{tab:class_distribution}
+    \centering
+    \begin{tabular}{clrrr}
+        \hline
+        \textbf{Class} & \textbf{Cover Type} & \textbf{Count}   & \textbf{Percentage} & \textbf{Cumulative \%} \\
+        \hline
+        2              & Lodgepole Pine      & 283,301          & 48.76\%             & 48.76\%                \\
+        1              & Spruce/Fir          & 211,840          & 36.46\%             & 85.22\%                \\
+        3              & Ponderosa Pine      & 35,754           & 6.15\%              & 91.37\%                \\
+        7              & Krummholz           & 20,510           & 3.53\%              & 94.90\%                \\
+        6              & Douglas-fir         & 17,367           & 2.99\%              & 97.89\%                \\
+        5              & Aspen               & 9,493            & 1.63\%              & 99.52\%                \\
+        4              & Cottonwood/Willow   & 2,747            & 0.47\%              & 100.00\%               \\
+        \hline
+        \textbf{Total} &                     & \textbf{581,012} & \textbf{100.00\%}   &                        \\
+        \hline
+    \end{tabular}
+    \caption{Distribution of forest cover types in the Covertype dataset}
+    \label{tab:class_distribution}
 \end{table}
 
 \textbf{Class Imbalance Problem}
@@ -226,8 +226,8 @@ Lodgepole Pine (Class 2) is by far the most common, making up almost half of all
 
 On the other end, Cottonwood/Willow (Class 4) is extremely rare with only 2,747 instances, which is just 0.47\% of the data. This means Lodgepole Pine appears about 103 times more often than Cottonwood/Willow. Aspen (Class 5) is also quite rare at only 1.63\% of the dataset.
 
-The remaining three classes (Ponderosa Pine, Krummholz, and Douglas-fir) fall somewhere in the middle, each representing between 3% and 6% of the data.
+The remaining three classes (Ponderosa Pine, Krummholz, and Douglas-fir) fall somewhere in the middle, each representing between 3\% and 6\% of the data.
 
-From an ecological perspective, this distribution actually makes sense. Lodgepole Pine is widespread in the Rocky Mountains because it can grow in many different conditions. Spruce/Fir forests are also very common at higher elevations in this region. On the other hand, Cottonwood and Willow trees only grow near water sources like rivers and streams. Since these riparian areas make up a small portion of the forest, it's natural that this class is rare in the dataset. Similarly, Aspen trees tend to grow in isolated patches rather than large continuous forests, which explains their lower representation. Krummholz only occurs in a narrow band at the treeline where conditions are too harsh for normal trees, so it covers a limited area.
+From an ecological perspective, this distribution actually makes sense. Lodgepole Pine is widespread in the Rocky Mountains because it can grow in many different conditions. Spruce/Fir forests are also very common at higher elevations in this region. On the other hand, Cottonwood and Willow trees only grow near water sources like rivers and streams. Since these riparian areas make up a small portion of the forest, it is natural that this class is rare in the dataset. Similarly, Aspen trees tend to grow in isolated patches rather than large continuous forests, which explains their lower representation. Krummholz only occurs in a narrow band at the treeline where conditions are too harsh for normal trees, so it covers a limited area.
 
 The imbalance ratio is calculated by dividing the largest class by the smallest class: $\frac{283,301}{2,747} = 103.1$. This tells us the majority class has 103 times more samples than the minority class.
