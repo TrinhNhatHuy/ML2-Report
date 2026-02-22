@@ -1,0 +1,232 @@
+\section{Experimental Setup}
+
+This section explains how we prepared the Covertype dataset and set up our experiments. We'll cover how we split the data, scaled the features, handled the class imbalance, configured our models, and chose our evaluation metrics.
+
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=0.8cm and 1.2cm,
+    box/.style={rectangle, draw, rounded corners, minimum width=2cm, minimum height=0.8cm, align=center, font=\small},
+    arrow/.style={->, >=stealth, thick}
+]
+
+% Top row - Training path
+\node[box, fill=blue!15] (data) {Original\\Dataset};
+\node[box, fill=green!15, right=of data] (train) {Train\\70\%};
+\node[box, fill=orange!20, right=of train] (scale_t) {Scale\\(fit)};
+\node[box, fill=red!20, right=of scale_t] (smote) {SMOTE};
+\node[box, fill=green!25, right=of smote] (final_t) {Balanced\\Train\\1.4M};
+
+% Bottom row - Test path
+\node[box, fill=green!15, below=2cm of train] (test) {Test\\30\%};
+\node[box, fill=orange!20, below=2cm of scale_t] (scale_test) {Scale\\(apply)};
+\node[box, fill=yellow!15, below=2cm of final_t] (final_test) {Imbalanced\\Test\\174K};
+
+% Arrows - Training path
+\draw[arrow] (data) -- (train);
+\draw[arrow] (train) -- (scale_t);
+\draw[arrow] (scale_t) -- (smote);
+\draw[arrow] (smote) -- (final_t);
+
+% Arrows - Test path
+\draw[arrow] (data) |- (test);
+\draw[arrow] (test) -- (scale_test);
+\draw[arrow] (scale_test) -- (final_test);
+
+% Connection showing scaler sharing
+\draw[arrow, dashed, red, thick] (scale_t) -- node[midway, right, font=\scriptsize] {same $\mu, \sigma$} (scale_test);
+
+% Labels
+\node[above=0.1cm of train, font=\scriptsize, text=blue] {406,708};
+\node[above=0.1cm of test, font=\scriptsize, text=blue] {174,304};
+\node[above=0.1cm of smote, font=\scriptsize, text=red] {oversample};
+
+% Legend/Notes
+\node[below=0.5cm of final_test, font=\scriptsize, align=left, text width=6cm] {
+    Note: SMOTE only applied to training set.\\
+    Test set remains imbalanced to reflect real distribution.
+};
+
+\end{tikzpicture}
+\caption{Complete preprocessing pipeline showing data flow for both training and test sets}
+\label{fig:complete_pipeline}
+\end{figure}
+
+\subsection{Dataset Splitting}
+
+The first step in our machine learning project is splitting the data into separate sets for training and testing. This is crucial because we need to evaluate our models on data they haven't seen during training.
+
+We used a 70/30 stratified split, meaning 70\% of the data goes to training and 30\% to testing. The "stratified" part is important, it ensures that each class maintains the same proportion in both sets as in the original dataset.
+
+After splitting:
+\begin{itemize}
+    \item Training set: 406,708 samples
+    \item Test set: 174,304 samples (30\%)
+    \item Random state: 42 (for reproducibility)
+\end{itemize}
+
+We set a random state of 42 so that if we run the experiment again, we will get exactly the same split. This makes our results reproducible.
+
+Stratification is especially important for imbalanced datasets like ours. Without it, we might accidentally get very few (or even zero) samples of rare classes like Cottonwood/Willow in one of our sets, which would make training or evaluation unreliable.
+
+
+\subsection{Feature Scaling}
+
+Different features in our dataset have very different ranges. For example, Elevation ranges from around 1,800 to 3,800 meters, while binary features like Soil Type are just 0 or 1. Some machine learning algorithms are sensitive to these scale differences.
+
+We applied standardization using StandardScaler, which transforms each feature to have:
+\begin{itemize}
+    \item Mean $\approx$ 0
+    \item Standard deviation $\approx$ 1
+\end{itemize}
+
+The scaling process followed a specific procedure to avoid data leakage:
+\begin{enumerate}
+    \item Fit the scaler on the training data only
+    \item Transform the training data using this fitted scaler
+    \item Transform the test data using the same scaler
+\end{enumerate}
+
+In the preprocessing task, we never let the scaler touch the test data during fitting. If we scaled the entire dataset before splitting, information from the test set would leak into the training process through the mean and standard deviation calculations.
+
+Feature scaling is especially important for distance-based algorithms like K-Nearest Neighbors and Support Vector Machines. Without scaling, features with larger ranges would dominate the distance calculations, making features with smaller ranges 
+
+\subsection{Handling Class Imbalance}
+
+As we saw in the class distribution analysis, our dataset is severely imbalanced. Table~\ref{tab:class_imbalance_before} shows the distribution in the training set before any balancing:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{crr}
+\hline
+\textbf{Class} & \textbf{Samples} & \textbf{Percentage} \\
+\hline
+1 (Spruce/Fir) & 148,288 & 36.46\% \\
+2 (Lodgepole Pine) & 198,310 & 48.76\% \\
+3 (Ponderosa Pine) & 25,028 & 6.15\% \\
+4 (Cottonwood/Willow) & 1,923 & 0.47\% \\
+5 (Aspen) & 6,645 & 1.63\% \\
+6 (Douglas-fir) & 12,157 & 2.99\% \\
+7 (Krummholz) & 14,357 & 3.53\% \\
+\hline
+\textbf{Total} & \textbf{406,708} & \textbf{100.00\%} \\
+\hline
+\end{tabular}
+\caption{Class distribution in training set before SMOTE}
+\label{tab:class_imbalance_before}
+\end{table}
+
+To address this imbalance, we used SMOTE (Synthetic Minority Over-sampling Technique). SMOTE doesn't just duplicate existing minority class samples - instead, it creates new synthetic samples by interpolating between existing ones.
+
+We applied SMOTE to the scaled training set (scaling was done first, before SMOTE). We configured SMOTE to oversample all minority classes up to the size of the majority class.
+
+After applying SMOTE:
+\begin{itemize}
+    \item Each class: 198,310 samples
+    \item Total training samples: 1,388,170
+    \item Perfect balance across all 7 classes
+\end{itemize}
+
+This means our training set grew from about 407,000 samples to about 1.4 million samples. While this increases training time, it should significantly improve the model's ability to learn patterns in rare classes.
+
+In this task, we only applied SMOTE to the training set. The test set remains unchanged and imbalanced, reflecting the real-world distribution we'll encounter when deploying the model.
+
+
+
+\subsection{Model Configuration}
+
+We evaluated four different classification algorithms, each with specific strengths and weaknesses. All models were configured to handle multi-class classification.
+
+\subsubsection{Decision Tree}
+
+The Decision Tree serves as our baseline interpretable model. It makes decisions by asking a series of yes/no questions about features.
+
+Configuration:
+\begin{itemize}
+    \item Max depth: 20 (prevents the tree from growing too deep)
+    \item Min samples split: 5 (requires at least 5 samples to split a node)
+    \item Class weight: balanced (gives more importance to minority classes)
+\end{itemize}
+
+We limited the max depth to 20 to prevent overfitting. Without this limit, the tree could grow until it perfectly memorizes the training data, which would hurt performance on the test set.
+
+The balanced class weights adjust the splitting criteria to account for class frequencies, even though we already applied SMOTE. This provides an extra layer of protection against bias.
+
+\subsubsection{Random Forest}
+
+Random Forest is an ensemble method that trains multiple decision trees and combines their predictions. It often performs better than a single tree because different trees make different mistakes, and averaging reduces overall error.
+
+Configuration:
+\begin{itemize}
+    \item Number of trees: 100
+    \item Max depth: 20 (per tree)
+    \item Min samples split: 5 (per tree)
+    \item Class weight: balanced
+    \item Parallel processing: enabled (n\_jobs = -1)
+\end{itemize}
+
+Each tree is trained on a random subset of the data and considers only a random subset of features at each split. This randomness makes the trees different from each other, which is key to the ensemble's success.
+
+We used 100 trees as a balance between performance and computational cost. More trees generally improve performance but with diminishing returns after a certain point.
+
+Parallel processing means the trees are trained simultaneously on multiple CPU cores, significantly speeding up training.
+
+\subsubsection{K-Nearest Neighbors (KNN)}
+
+KNN is a lazy learner that doesn't actually build a model during training. Instead, it memorizes the training data and makes predictions by finding similar examples.
+
+Configuration:
+\begin{itemize}
+    \item k = 5 (considers 5 nearest neighbors)
+    \item Distance weighting: enabled (closer neighbors have more influence)
+    \item Parallel processing: enabled
+\end{itemize}
+
+For each test sample, KNN finds the 5 most similar training samples based on Euclidean distance in the scaled feature space. It then predicts the class by taking a weighted vote of these 5 neighbors, where closer neighbors count more.
+
+We chose k=5 as a common default that balances between being too sensitive to noise (small k) and being too broad (large k).
+
+KNN requires feature scaling to work properly, which is why we standardized the features earlier.
+
+\subsubsection{Support Vector Machine (SVM)}
+
+SVM tries to find the optimal decision boundary that separates different classes with the maximum margin. We used the RBF (Radial Basis Function) kernel, which allows the model to learn nonlinear decision boundaries.
+
+Due to the high computational cost of SVM with an RBF kernel on large datasets, we applied random subsampling and trained the model on 50,000 samples from the training set.
+
+Configuration:
+\begin{itemize}
+    \item Kernel: RBF (Radial Basis Function)
+    \item C = 10 (regularization parameter)
+    \item Gamma: scale (kernel coefficient)
+    \item Class weight: balanced
+    \item Training data: 50,000 randomly sampled instances
+\end{itemize}
+
+The parameter C controls the trade-off between having a smooth decision boundary and classifying training points correctly. A higher C (such as 10) penalizes misclassifications more strongly and may lead to a more complex boundary.
+
+Gamma determines how far the influence of a single training example reaches. We used \texttt{scale}, which automatically sets gamma based on the number of features and the variance of the data.
+
+SVM is computationally expensive, particularly with nonlinear kernels. Subsampling to 50,000 instances significantly reduces training time while maintaining representative data distribution.
+
+\subsection{Implementation Details}
+
+All experiments were implemented in Python using standard machine learning libraries:
+
+\begin{itemize}
+    \item \textbf{scikit-learn}: For all four classification models, StandardScaler, train-test splitting, and evaluation metrics
+    \item \textbf{imbalanced-learn}: For SMOTE implementation
+    \item \textbf{numpy} and \textbf{pandas}: For data manipulation
+\end{itemize}
+
+Key implementation decisions:
+
+\begin{itemize}
+    \item Random seed: 42 (set for all random operations to ensure reproducibility)
+    \item Parallelization: enabled where supported (n\_jobs = -1 uses all available CPU cores)
+    \item Order of operations: Split → Scale → SMOTE → Train → Evaluate
+\end{itemize}
+
+The order of operations is critical. We performed feature scaling before applying SMOTE to ensure that synthetic samples are generated in a normalized feature space. This makes the interpolation between samples more meaningful.
+
