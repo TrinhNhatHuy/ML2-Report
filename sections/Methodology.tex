@@ -67,6 +67,64 @@ Strong correlations suggest that some features capture related information, whic
 
 \textbf{Coefficient of Variation (CV\%)} provides relative variability, allowing fair comparison between features with different scales. Features with high CV\% show high relative variability and may be strong predictors.
 
+\subsubsection{Preprocessing Methods}
+
+\paragraph{Stratified Train-Test Split}
+
+\textbf{Defintition} We divided the dataset into training and test sets using stratified sampling, which maintains the same class proportions in both subsets as in the original dataset.
+
+For a dataset with $C$ classes, if class $i$ represents proportion $p_i$ of the total data, stratified splitting ensures:
+$$p_i^{\text{train}} = p_i^{\text{test}} = p_i^{\text{original}}$$
+
+We used a 70/30 split ratio:
+\begin{itemize}
+    \item Training: 70\% of data
+    \item Test: 30\% of data
+    \item Random state: 42 (for reproducibility)
+\end{itemize}
+
+ Standard random splitting can be problematic for imbalanced datasets. With rare classes, random splitting might accidentally place most or all instances of a rare class in one set, making training or evaluation unreliable or impossible.
+
+Stratified splitting guarantees proportional representation of all classes in both sets, ensuring:
+\begin{itemize}
+    \item Every class appears in training data for learning
+    \item Every class appears in test data for evaluation
+    \item Training and test distributions match the real-world distribution
+    \item Reliable performance estimates across all classes
+\end{itemize}
+
+\paragraph{Standard Scaling}
+
+\textbf{Definition} Standard scaling (z-score normalization) transforms each feature to have mean 0 and standard deviation 1 using:
+
+$$x_{\text{scaled}} = \frac{x - \mu}{\sigma}$$
+
+where $\mu$ is the feature mean and $\sigma$ is the standard deviation.
+
+\textbf{Critical implementation}: To prevent data leakage, we must:
+\begin{enumerate}
+    \item Fit the scaler on training data only (calculate $\mu$ and $\sigma$ from training)
+    \item Transform training data using these parameters
+    \item Transform test data using the same parameters from step 1
+\end{enumerate}
+
+ Features often have vastly different scales (e.g., elevation in thousands of meters vs. binary 0/1 indicators). Without scaling:
+
+\begin{itemize}
+    \item \textbf{Distance-based algorithms} (KNN, SVM) are dominated by high variance features because distance calculations treat all features equally
+    \item \textbf{Gradient-based optimization} (neural networks, logistic regression) may converge slowly or poorly
+    \item \textbf{Feature importance} becomes difficult to interpret when scales differ
+\end{itemize}
+
+We chose StandardScaler over alternatives because:
+\begin{itemize}
+    \item \textbf{vs. Min-Max Scaling}: More robust to outliers; doesn't compress data into fixed [0,1] range
+    \item \textbf{vs. No Scaling}: Essential for KNN and SVM; good practice even for tree based models
+    \item \textbf{vs. Robust Scaler}: Standard scaler is simpler and works well when data is roughly normal
+\end{itemize}
+
+StandardScaler maintains the relative distribution shape while ensuring features contribute equally to distance calculations.
+
 \subsection{Class Imbalance Handling} % Lam SMOTE voi Class Weight nha Huy
 
 
