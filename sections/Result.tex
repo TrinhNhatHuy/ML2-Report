@@ -1,0 +1,184 @@
+\section{Results \& Evaluation}
+This section presents the experimental results obtained from different classification models on the Covertype dataset. We evaluate model performance under two scenarios: training with and without SMOTE to address class imbalance. 
+
+The comparison focuses on both predictive performance and computational efficiency. Performance is assessed using Balanced Accuracy, Macro F1-score, Weighted F1-score, and Cohen's Kappa, while computational cost is measured in terms of training and prediction time. 
+
+The objective is to analyze the trade-offs between accuracy, robustness to class imbalance, and computational complexity across different machine learning models.
+\subsection{Overall Performance Comparison}
+
+This subsection provides a comprehensive comparison of model performance 
+under two experimental settings: training without SMOTE and training with SMOTE. 
+We evaluate classification effectiveness using Balanced Accuracy, Macro F1-score, 
+Weighted F1-score, and Cohen’s Kappa. In addition, computational efficiency 
+is assessed through training time and prediction time. The objective is to 
+identify performance trade-offs across different machine learning models 
+and to analyze the impact of SMOTE on imbalanced data handling.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llccccccc}
+\toprule
+Scenario & Model & Bal. Acc & Macro F1 & W-F1 & Kappa & Train (s) & Pred (s) & Samples \\
+\midrule
+\multirow{4}{*}{Without SMOTE} 
+& Decision Tree & 0.8931 & 0.8173 & 0.8819 & 0.8096 & 8.84 & 0.22 & 406,708 \\
+& Random Forest & 0.9172 & 0.8565 & 0.8973 & 0.8347 & 92.39 & 3.37 & 406,708 \\
+& KNN (k=5) & 0.8708 & 0.8816 & 0.9307 & 0.8888 & 0.29 & 617.38 & 406,708 \\
+& SVM (RBF) & 0.7646 & 0.6183 & 0.7243 & 0.5683 & 20.38 & 223.82 & 20,000 \\
+\midrule
+\multirow{4}{*}{With SMOTE} 
+& Decision Tree & 0.8980 & 0.8248 & 0.8841 & 0.8137 & 74.91 & 0.08 & 1,388,170 \\
+& Random Forest & 0.9268 & 0.8534 & 0.8968 & 0.8338 & 572.91 & 4.15 & 1,388,170 \\
+& KNN (k=5) & 0.9153 & 0.8672 & 0.9240 & 0.8780 & 0.17 & 2118.72 & 1,388,170 \\
+& SVM (RBF) & 0.7922 & 0.5884 & 0.6898 & 0.5206 & 9.65 & 175.44 & 20,000 \\
+\bottomrule
+\end{tabular}
+\caption{Overall performance comparison across models with and without SMOTE.}
+\label{tab:overall_comparison}
+\end{table}
+\begin{figure}[H]
+    \centering
+    % Nhớ đổi tên file ảnh tương ứng
+    \includegraphics[width=\textwidth]{images/image.png}
+    \caption{Comparison of overall performance metrics across models, evaluated with and without SMOTE.}
+    \label{fig:overall_performance_charts}
+\end{figure}
+
+As observed in Table~\ref{tab:overall_comparison} and clearly visualized in Figure~\ref{fig:overall_performance_charts}, Random Forest and KNN consistently emerge as the top-performing models across nearly all metrics. Random Forest demonstrates exceptional stability and high predictive power, making it the most robust choice overall. KNN (k=5) follows closely, particularly excelling in Weighted F1-score.
+
+In stark contrast, the Support Vector Machine (SVM) with an RBF kernel exhibits the lowest performance, significantly lagging behind the tree-based and distance-based algorithms in both scenarios. 
+
+Furthermore, the grouped bar charts in Figure~\ref{fig:overall_performance_charts} provide an initial visual intuition regarding the influence of SMOTE. While some models like the Decision Tree show slight positive shifts across the board, others display mixed reactions. This distinct behavior and the underlying trade-offs introduced by data oversampling will be analyzed in detail in Section~\ref{sec:impact_of_smote}.
+\subsection{Impact of SMOTE}
+\label{sec:impact_of_smote}
+
+To isolate and evaluate the specific effect of handling class imbalance, we analyze the absolute changes ($\Delta$) in performance metrics before and after applying SMOTE. Table~\ref{tab:smote_impact_delta} summarizes these numerical variations, while Figure~\ref{fig:smote_impact_chart} provides a visual representation of these shifts across the four models.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+Model & $\Delta$ Balance Acc. & $\Delta$ Macro F1 & $\Delta$ Weighted F1 & $\Delta$ Kappa \\
+\midrule
+Decision Tree & +0.0049 & +0.0075 & +0.0022 & +0.0041 \\
+Random Forest & +0.0095 & -0.0030 & -0.0005 & -0.0010 \\
+KNN (k=5)     & +0.0444 & -0.0144 & -0.0067 & -0.0108 \\
+SVM (RBF)     & -0.0091 & -0.0297 & -0.0278 & -0.0407 \\
+\bottomrule
+\end{tabular}
+\caption{Performance metric changes ($\Delta$) after applying SMOTE.}
+\label{tab:smote_impact_delta}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    % Nhớ thay 'tên_file_ảnh_của_bạn.png' bằng đường dẫn thực tế, ví dụ: 'images/smote_impact_chart.png'
+    \includegraphics[width=0.9\textwidth]{images/smote.png}
+    \caption{Effect of SMOTE on performance metrics across different models. Positive values indicate an improvement after applying SMOTE.}
+    \label{fig:smote_impact_chart}
+\end{figure}
+
+As detailed in Table~\ref{tab:smote_impact_delta} and visually evident in Figure~\ref{fig:smote_impact_chart}, the impact of SMOTE is highly model-dependent. The results highlight a significant trade-off between minority class recognition and overall model precision across different algorithms.
+
+\begin{itemize}
+    \item \textbf{Comprehensive Improvement (Decision Tree):} The Decision Tree is the only algorithm that demonstrates universal improvement. As seen in the table and the entirely positive bars in the chart, all metrics exhibit slight gains (e.g., Macro F1 increased by +0.0075). By generating synthetic samples, SMOTE successfully clarifies the decision boundaries for underrepresented classes without severely overfitting or corrupting the majority class rules.
+    
+    \item \textbf{The Recall-Precision Trade-off (KNN and Random Forest):} Both Table~\ref{tab:smote_impact_delta} and Figure~\ref{fig:smote_impact_chart} clearly illustrate a trade-off for KNN and Random Forest. For instance, KNN shows a massive spike in Balanced Accuracy (+0.0444), indicating superior minority instance capture (higher recall). However, the accompanying negative values for Macro F1 (-0.0144), Weighted F1 (-0.0067), and Kappa (-0.0108) suggest this comes at the cost of precision. The synthetic data points likely introduce overlaps between classes, causing the models to misclassify majority instances as minority ones.
+    
+    \item \textbf{Performance Degradation (SVM):} Conversely, the SVM with RBF kernel reacts entirely negatively to SMOTE, with all metric changes falling below zero. The dense injection of synthetic instances in the highly dimensional feature space likely blurs the clear margins required by SVM, introducing significant noise and completely degrading the decision hyperplanes.
+\end{itemize}
+\subsection{Computational Cost Analysis}
+\label{sec:computational_cost}
+
+Beyond predictive performance, computational efficiency is a critical factor, especially when dealing with large datasets like Covertype. Table~\ref{tab:computational_complexity} outlines the theoretical time complexity for training and prediction phases across the models, where $n$ is the number of samples, $d$ is the number of features, $t$ is the number of trees in the ensemble, and $sv$ is the number of support vectors.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lllc}
+\toprule
+Model & Purpose & Training Complexity & Prediction Complexity \\
+\midrule
+Decision Tree & Baseline (fast, interpretable) & $\mathcal{O}(n \times d \times \log n)$ & $\mathcal{O}(\log n)$ \\
+Random Forest & Ensemble (expected best model) & $\mathcal{O}(t \times n \times d \times \log n)$ & $\mathcal{O}(t \times \log n)$ \\
+SVM (RBF) & Kernel-based (needs subsampling) & $\mathcal{O}(n^2)$ to $\mathcal{O}(n^3)$ & $\mathcal{O}(sv \times d)$ \\
+% Note: You can add KNN complexity here if you have it, typically O(n*d) for prediction if brute force.
+\bottomrule
+\end{tabular}
+\caption{Theoretical computational complexity of evaluated models.}
+\label{tab:computational_complexity}
+\end{table}
+
+These theoretical complexities align precisely with the empirical execution times observed during our experiments (previously presented in Table~\ref{tab:overall_comparison}):
+
+\begin{itemize}
+    \item \textbf{Decision Tree (The Baseline):} True to its $\mathcal{O}(n \times d \times \log n)$ training complexity, the Decision Tree is exceptionally fast, taking only 8.84 seconds on the original dataset and 74.91 seconds on the massive SMOTE dataset (1,388,170 samples). Its tree-traversal prediction phase ($\mathcal{O}(\log n)$) is nearly instantaneous (under 0.3 seconds).
+    
+    \item \textbf{Random Forest (The Ensemble):} Because it builds $t$ independent trees, its training time scales linearly with $t$. It took roughly 10 times longer to train than the single Decision Tree (92.39 seconds without SMOTE; 572.91 seconds with SMOTE). However, this additional computational cost is justified by it being the most robust and best-performing model overall.
+    
+    \item \textbf{SVM with RBF Kernel (The Bottleneck):} SVM is notoriously slow on large datasets due to its quadratic to cubic training complexity ($\mathcal{O}(n^2)$ to $\mathcal{O}(n^3)$). This theoretical limitation necessitated subsampling the dataset to only 20,000 instances for SVM. Even with less than 5\% of the original data, training took around 10-20 seconds, and prediction was severely bottlenecked ($\mathcal{O}(sv \times d)$), taking up to 223.82 seconds. Running SVM on the full 406,708 or 1.3M SMOTE samples would be computationally prohibitive.
+\end{itemize}
+
+In summary, while Random Forest provides the best predictive capabilities, the single Decision Tree offers an unbeatable balance of speed and acceptable accuracy. SVM, despite its theoretical power, proves too computationally expensive for the scale of the Covertype dataset.
+\subsection{Per-Class Performance}
+\label{sec:per_class_performance}
+
+To avoid overwhelming the analysis with redundant metrics, Table~\ref{tab:per_class_f1} consolidates the F1-scores of representative majority classes (Classes 1 and 2) and minority classes (Classes 4, 5, and 6) across all models.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llccccc}
+\toprule
+\multirow{2}{*}{Model} & \multirow{2}{*}{Scenario} & \multicolumn{2}{c}{Majority Classes (F1)} & \multicolumn{3}{c}{Minority Classes (F1)} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-7}
+& & Class 1 & Class 2 & Class 4 & Class 5 & Class 6 \\
+\midrule
+\multirow{2}{*}{Decision Tree} 
+& Without SMOTE & 0.8903 & 0.8925 & 0.8245 & 0.5584 & 0.7951 \\
+& With SMOTE    & 0.8905 & 0.8943 & \textbf{0.8322} & \textbf{0.5875} & \textbf{0.8000} \\
+\midrule
+\multirow{2}{*}{Random Forest} 
+& Without SMOTE & 0.8971 & 0.9051 & \textbf{0.8681} & \textbf{0.6391} & 0.8342 \\
+& With SMOTE    & 0.8984 & 0.9037 & 0.8618 & 0.6254 & \textbf{0.8345} \\
+\midrule
+\multirow{2}{*}{KNN (k=5)} 
+& Without SMOTE & 0.9320 & 0.9428 & \textbf{0.8029} & \textbf{0.8089} & \textbf{0.8321} \\
+& With SMOTE    & 0.9297 & 0.9351 & 0.7961 & 0.7532 & 0.8241 \\
+\midrule
+\multirow{2}{*}{SVM (RBF)} 
+& Without SMOTE & 0.7701 & 0.7581 & \textbf{0.6404} & \textbf{0.3426} & \textbf{0.6183} \\
+& With SMOTE    & 0.7451 & 0.7284 & 0.6153 & 0.3038 & 0.5930 \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of F1-scores for majority (1, 2) and minority (4, 5, 6) classes across all models.}
+\label{tab:per_class_f1}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    % Thay đường dẫn ảnh thực tế của bạn vào đây
+    \includegraphics[width=\textwidth]{images/7.4_images.png}
+    \caption{Per-class F1-scores for all models trained with SMOTE. The percentages indicate the original prevalence of each class, highlighting that smaller classes remain harder to predict.}
+    \label{fig:per_class_f1_chart}
+\end{figure}
+
+A detailed examination of Table~\ref{tab:per_class_f1} and Figure~\ref{fig:per_class_f1_chart} reveals that global performance metrics heavily mask the underlying disparities between individual classes. As strikingly illustrated in Figure~\ref{fig:per_class_f1_chart}, the majority classes (Type 1 and Type 2, constituting over 85\% of the data) consistently achieve high F1-scores across all models. In contrast, the minority classes, particularly Type 4 (0.5\%) and Type 5 (1.6\%), show significantly lower performance bars, even after the application of SMOTE. Table~\ref{tab:per_class_f1} further details that the introduction of SMOTE yields highly polarized results for these rare instances. For the Decision Tree, synthetic oversampling clarifies induction rules, boosting the Class 5 F1-score from 0.5584 to 0.5875. Conversely, distance and margin-based classifiers suffer severe degradation due to introduced noise; KNN's Class 5 F1-score drops from 0.8089 to 0.7532, and SVM's plummets to 0.3038. Even the powerful Random Forest ensemble experiences a slight regression in minority F1-scores, confirming that while SMOTE aids simple spatial splits, it forces complex models to trade precision for recall in overlapping regions.
+\subsection{Confusion Matrix Analysis}
+\label{sec:confusion_matrix}
+
+To gain deeper insights into the specific classification errors made by each model, we analyze their normalized confusion matrices, presented in Figure~\ref{fig:confusion_matrices}. The diagonal elements in these matrices represent the recall for each class, while the off-diagonal elements highlight the proportion of instances misclassified into other categories.
+
+\begin{figure}[H]
+    \centering
+    % Nhớ thay tên file ảnh thực tế của bạn vào đây
+    \includegraphics[width=\textwidth]{images/7.5_images.png}
+    \caption{Normalized Confusion Matrices for all models trained with SMOTE. The diagonal represents the recall per class.}
+    \label{fig:confusion_matrices}
+\end{figure}
+
+A prominent dark blue diagonal is visible across the tree-based models and KNN, confirming their strong ability to identify most classes correctly when trained on SMOTE-balanced data. However, a consistent pattern of confusion emerges between the two majority classes, Class 1 and Class 2. For instance, even the best-performing Random Forest model misclassifies 9\% of actual Class 1 instances as Class 2, and 7\% of actual Class 2 instances as Class 1. This persistent overlap suggests that these two dominant forest cover types share highly similar geographical or ecological features that are difficult to separate completely using the current feature set. 
+
+Beyond the majority classes, specific models exhibit distinct vulnerabilities with minority categories. The SVM (RBF) model displays the noisiest matrix, with severe confusion extending across multiple classes; it incorrectly predicts 16\% of Class 1 as Class 2, 19\% of Class 2 as Class 1, and notably confuses Class 3 with Class 6, misclassifying 19\% of actual Class 3 instances. Similarly, KNN demonstrates a specific weakness in distinguishing Class 4, misclassifying 10\% of its instances as Class 3. Ultimately, the Random Forest matrix exhibits the highest concentration of values along the diagonal and the least off-diagonal noise, visually confirming its position as the most accurate and robust model in bridging the gap between majority and minority class recognition.

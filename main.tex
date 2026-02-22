@@ -6,7 +6,7 @@
 \usepackage{graphicx}
 \usepackage{float}
 \geometry{a4paper, top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
-
+\usepackage{multirow}
 % import more libraries
 \usepackage{float}
 \usepackage{tabularx}
@@ -40,7 +40,13 @@
 % --- header layout ---
 \fancyhead[L]{GROUP 37}
 \fancyhead[R]{\rightmark}
-
+\makeatletter
+\renewcommand{\@seccntformat}[1]{\csname the#1\endcsname.\quad}
+\makeatother
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\usepackage{booktabs}
+\usepackage{adjustbox}
 \begin{document}
 
 % ======================= COVER PAGE ==========================
@@ -99,7 +105,11 @@
 
 
 \input{sections/Introduction.tex}
+\input{sections/Methodology.tex}
+\input{sections/Data-Analysis.tex}
+\input{sections/Experimence.tex}
+\input{sections/Result.tex}
+\input{sections/Discussion.tex}
 \input{sections/Conclusion.tex}
-
 
 \end{document}
