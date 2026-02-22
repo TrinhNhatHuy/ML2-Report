@@ -130,5 +130,216 @@ StandardScaler maintains the relative distribution shape while ensuring features
 
 \subsection{Model Selection}
 
+We evaluated four supervised learning algorithms representing distinct machine learning paradigms to ensure a comprehensive comparison across model families.
+
+\paragraph{Decision Tree}
+
+\textbf{Model Description:}  
+A tree-structured classifier that recursively partitions the feature space using hierarchical decision rules. Internal nodes represent feature tests, branches correspond to outcomes, and leaf nodes assign class labels.
+
+Configuration:
+\begin{itemize}
+    \item Max depth: 20
+    \item Min samples split: 5
+    \item Class weight: balanced
+    \item Criterion: Gini impurity
+\end{itemize}
+
+\textbf{Rationale for inclusion:}  
+Decision Trees provide an interpretable baseline model with minimal preprocessing requirements. They naturally capture non-linear relationships and interactions between features, and they serve as the foundational learner for ensemble methods such as Random Forest.
+
+Limitations: Susceptible to overfitting and high variance when used as a single model.
+
+% ------------------------------------------------------------
+
+\paragraph{Random Forest}
+
+\textbf{Model Description:}  
+An ensemble learning method that constructs multiple decision trees using bootstrap sampling and random feature selection, aggregating predictions through majority voting.
+
+Configuration:
+\begin{itemize}
+    \item Number of trees: 100
+    \item Max depth: 20 (per tree)
+    \item Min samples split: 5 (per tree)
+    \item Class weight: balanced
+    \item Bootstrap: True
+\end{itemize}
+
+Each tree is trained on:
+\begin{itemize}
+    \item A bootstrap sample of the training data
+    \item A random subset of features at each split
+\end{itemize}
+
+Final prediction: Majority vote across all trees.
+
+\textbf{Rationale for inclusion:}  
+Random Forest reduces variance through ensemble averaging and generally provides strong performance on structured tabular data. It is widely regarded as a robust benchmark model due to its stability and resistance to overfitting.
+
+Limitations: Reduced interpretability compared to a single tree and increased computational cost.
+
+% ------------------------------------------------------------
+
+\paragraph{K-Nearest Neighbors (KNN)}
+
+\textbf{Model Description:}  
+A non-parametric, instance-based classifier that assigns labels based on the majority class among the $k$ nearest neighbors in feature space.
+
+Configuration:
+\begin{itemize}
+    \item $k$ = 5 neighbors
+    \item Distance metric: Euclidean
+    \item Weights: distance (inverse distance weighting)
+\end{itemize}
+
+Prediction rule:
+
+$$
+\hat{y} = \arg\max_{c} \sum_{i \in N_k(x)} w_i \cdot \mathbb{I}(y_i = c)
+$$
+
+where $N_k(x)$ denotes the set of $k$ nearest neighbors and 
+$w_i = \frac{1}{d(x, x_i)}$.
+
+\textbf{Rationale for inclusion:}  
+KNN represents a distance-based learning paradigm distinct from tree-based and margin-based approaches. Its inclusion enables evaluation of similarity-driven classification behavior under a non-parametric framework.
+
+Limitations: Computationally expensive during prediction and sensitive to feature scaling and high dimensionality.
+
+% ------------------------------------------------------------
+
+\paragraph{Support Vector Machine (SVM)}
+
+\textbf{Model Description:}  
+A margin-based classifier that identifies the optimal separating hyperplane by maximizing the margin between classes. The RBF kernel enables modeling of non-linear decision boundaries.
+
+Configuration:
+\begin{itemize}
+    \item Kernel: RBF (Radial Basis Function)
+    \item $C$ = 10
+    \item Gamma: scale
+    \item Class weight: balanced
+\end{itemize}
+
+RBF kernel:
+
+$$
+K(x_i, x_j) = \exp\left(-\gamma \|x_i - x_j\|^2\right)
+$$
+
+with $\gamma = \frac{1}{n_{\text{features}} \times \mathrm{Var}(X)}$ under the \texttt{scale} setting.
+
+\textbf{Rationale for inclusion:}  
+SVM provides a theoretically grounded margin-optimization framework. The RBF kernel enables flexible non-linear modeling in high-dimensional spaces, allowing comparison with ensemble-based and distance-based methods under a distinct optimization paradigm.
+
+Limitations: High computational complexity for large datasets and sensitivity to hyperparameter selection.
+
 
 \subsection{Evaluation Metrics and Computational consideration} % de t lam phan nay cho nha huy
+
+% ============================================================
+\subsubsection{Evaluation Metrics}
+
+Given the multi-class and imbalanced nature of the dataset, multiple complementary metrics were employed to provide a comprehensive performance assessment.
+
+% ------------------------------------------------------------
+
+\paragraph{Balanced Accuracy}
+
+\textbf{Definition:}
+
+$$
+\text{Balanced Accuracy} = \frac{1}{C} \sum_{i=1}^{C} 
+\frac{TP_i}{TP_i + FN_i}
+$$
+
+This metric assigns equal importance to each class, mitigating the effect of imbalance.
+
+% ------------------------------------------------------------
+
+\paragraph{Per-Class F1-Score}
+
+For each class $i$:
+
+$$
+\text{Precision}_i = \frac{TP_i}{TP_i + FP_i}
+$$
+
+$$
+\text{Recall}_i = \frac{TP_i}{TP_i + FN_i}
+$$
+
+$$
+\text{F1}_i = 2 \cdot 
+\frac{\text{Precision}_i \cdot \text{Recall}_i}
+{\text{Precision}_i + \text{Recall}_i}
+$$
+
+Provides class-specific performance analysis.
+
+% ------------------------------------------------------------
+
+\paragraph{Macro F1-Score}
+
+$$
+\text{Macro F1} = \frac{1}{C} \sum_{i=1}^{C} \text{F1}_i
+$$
+
+Evaluates unweighted average performance across classes.
+
+% ------------------------------------------------------------
+
+\paragraph{Weighted F1-Score}
+
+$$
+\text{Weighted F1} = 
+\sum_{i=1}^{C} w_i \cdot \text{F1}_i
+$$
+
+where 
+
+$$
+w_i = \frac{n_i}{\sum_{j=1}^{C} n_j}
+$$
+
+Accounts for class frequency in aggregation.
+
+% ------------------------------------------------------------
+
+\paragraph{Cohen's Kappa ($\kappa$)}
+
+$$
+\kappa = \frac{p_o - p_e}{1 - p_e}
+$$
+
+where $p_o$ is observed agreement and $p_e$ is expected agreement by chance.
+
+Measures agreement corrected for chance.
+
+% ------------------------------------------------------------
+
+\paragraph{Confusion Matrix}
+
+A $C \times C$ matrix where element $(i,j)$ represents the number of samples from true class $i$ predicted as class $j$.
+
+Provides detailed inspection of class-level prediction patterns and misclassification structure.
+
+% ============================================================
+\subsubsection{Computational Complexity}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lcc}
+\hline
+\textbf{Model} & \textbf{Training Complexity} & \textbf{Prediction Complexity} \\
+\hline
+Decision Tree & $O(n d \log n)$ & $O(\log n)$ \\
+Random Forest & $O(t n d \log n)$ & $O(t \log n)$ \\
+KNN & $O(1)$ & $O(n d)$ per sample \\
+SVM (RBF) & $O(n^2)$ to $O(n^3)$ & $O(sv \cdot d)$ \\
+\hline
+\end{tabular}
+\caption{Computational complexity where $n$ = samples, $d$ = features, $t$ = trees, $sv$ = support vectors}
+\label{tab:complexity}
+\end{table}
